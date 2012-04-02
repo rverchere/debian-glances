@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+%:
+		dh $@ --with python2
+
+override_dh_auto_install:
+	#python setup.py install --root=debian/glances --install-layout=deb --install-lib=/usr/share/glances --install-scripts=/usr/share/glances
+	python setup.py install --root=debian/glances --install-layout=deb --install-lib=/usr/share/glances
+
+override_dh_auto_build:
+
+# *.po~ come from upstream
+# override dh_clean to keep upstream files…
+override_dh_clean:
+	dh_clean -X glances.po~
+
+override_dh_fixperms:
+	dh_fixperms -X/usr/share/glances/src/glances.py
+	# TODO: how to keep glances.py executable :/
+	#       dh_fixperms exclusion seems not to be the way
+	chmod a+x debian/glances/usr/share/glances/src/glances.py
