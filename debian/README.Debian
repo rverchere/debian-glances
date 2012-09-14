@@ -1,0 +1,16 @@
+HTML Output is not working out of the box.
+
+It is however possible to get it working. Glances should be run within a folder
+containing html, css and img folders.
+They are located in /usr/share/glances/
+
+For instance:
+
+	mkdir /tmp/glances
+	cd /tmp/glances
+	for dir in css img html; do ln -sf usr/share/glances/$dir;done
+	glances -o html -f /tmp/glances
+
+
+-- Efrim <efrim@azylum.org>  Fri, 14 Sep 2012 17:22:38 +0200
+

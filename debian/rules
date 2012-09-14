@@ -16,10 +16,15 @@ override_dh_auto_build:
 # *.po~ come from upstream
 # override dh_clean to keep upstream files…
 override_dh_clean:
+	rm -rf ./Glances.egg-info
 	dh_clean -X glances.po~
 
 override_dh_fixperms:
-	dh_fixperms -X/usr/share/glances/src/glances.py
+	dh_fixperms -X/usr/share/glances/glances/glances.py
 	# TODO: how to keep glances.py executable :/
 	#       dh_fixperms exclusion seems not to be the way
-	chmod a+x debian/glances/usr/share/glances/src/glances.py
+	chmod a+x debian/glances/usr/share/glances/glances/glances.py
+
+override_dh_installdocs:
+	dh_installdocs
+	rm -f debian/glances/usr/share/doc/glances/COPYING

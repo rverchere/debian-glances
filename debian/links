@@ -1,2 +1,2 @@
-/usr/share/glances/src/glances.py /usr/bin/glances
+/usr/share/glances/glances/glances.py /usr/bin/glances
 
