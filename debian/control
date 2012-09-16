@@ -1,10 +1,12 @@
 Source: glances
 Section: utils
 Priority: extra
-Maintainer: Efrim <efrim@azylum.org>
-Build-Depends: python-all (>=2.6), debhelper (>= 9), autotools-dev
+Maintainer: Geoffroy Youri Berret <efrim@azylum.org>
+Build-Depends: python-all (>=2.6), debhelper (>= 9)
 Standards-Version: 3.9.3
 X-Python-Version: >= 2.6
+Vcs-Git: git://git.kaliko.me/glances.git
+Vcs-browser: http://git.kaliko.me/?p=glances.git
 Homepage: http://nicolargo.github.com/glances/
 
 Package: glances
