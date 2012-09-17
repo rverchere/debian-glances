@@ -2,4 +2,4 @@ glances (1.4.1.1-1) unstable; urgency=low
 
   * Initial package (closes: #654888).
 
- -- Geoffroy Youri Berret <efrim@azylum.org>  Fri, 14 Sep 2012 15:43:23 +0200
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Mon, 17 Sep 2012 17:27:25 +0200

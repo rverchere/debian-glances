@@ -1,4 +1,5 @@
-HTML Output is not working out of the box.
+HTML Output is not working (cf. github issue #67).
+It throws an exception because of a missing html template.
 
 It is however possible to get it working. Glances should be run within a folder
 containing html, css and img folders. They are located in /usr/share/glances/
@@ -10,6 +11,9 @@ For instance:
 	for dir in css img html; do ln -sf usr/share/glances/$dir;done
 	glances -o html -f /tmp/glances
 
+
+Related issue on github tracker:
+	https://github.com/nicolargo/glances/issues/67
 
 -- Geoffroy Youri Berret <efrim@azylum.org>  Fri, 14 Sep 2012 17:22:38 +0200
 
