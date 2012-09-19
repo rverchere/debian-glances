@@ -15,6 +15,6 @@ Depends: ${misc:Depends}, ${python:Depends}, python-psutil (>=0.4.1)
 Recommends: python-jinja2 (>=2.0)
 Description: CLI curses based monitoring tool
  Glances is a CLI curses based monitoring tool for GNU/Linux or BSD OS.
- Glances uses the libstatgrab library to get information from your system.
+ Glances uses the PsUtil library to get information from your system.
  .
  It monitors CPU, load, memory, network bandwidth, disk I/O, disk use, process.
