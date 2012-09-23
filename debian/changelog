@@ -1,8 +1,9 @@
 glances (1.4.2-1) UNRELEASED; urgency=low
 
   * Imported Upstream version 1.4.2
+  * Removed man page patch (fixed upstream)
 
- -- Geoffroy Youri Berret <efrim@azylum.org>  Sun, 23 Sep 2012 10:55:55 +0200
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Sun, 23 Sep 2012 11:45:01 +0200
 
 glances (1.4.1.1-1) unstable; urgency=low
 
