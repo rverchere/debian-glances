@@ -20,7 +20,7 @@
 #
 
 __appname__ = 'glances'
-__version__ = "1.4.2"
+__version__ = "1.4.2.1"
 __author__ = "Nicolas Hennion <nicolas@nicolargo.com>"
 __licence__ = "LGPL"
 
@@ -412,17 +412,19 @@ class glancesStats:
         else:
             self.host['os_version'] = ""
 
-    def __get_process_statsNEW__(self, proc):
+    def __get_process_stats_NEW__(self, proc):
         """
         Get process (proc) statistics
-        !!! Waiting PATCH for PsUtil
-        !!! http://code.google.com/p/psutil/issues/detail?id=329
-        !!! Performance gap ???
+        !!! No performance gap (CPU %)
+        !!! Without: 1.5 - 2.0 
+        !!! With:    2.0 - 2.2
+        
         """
-        procstat = proc.as_dict(['memory_info', 'cpu_percent', 'memory_percent',
-                                 'io_counters', 'pid', 'username', 'nice',
-                                 'cpu_times', 'name', 'status', 'cmdline'])
-      
+        procstat = proc.as_dict(['get_memory_info', 'get_cpu_percent', 'get_memory_percent',
+                                 'pid', 'username', 'get_nice',
+                                 'get_cpu_times', 'name', 'status', 'cmdline'])
+        if psutil_get_io_counter_tag:
+            procstat['io_counters']  = proc.get_io_counters()      
         procstat['status'] = str(procstat['status'])[:1].upper()
         procstat['cmdline'] = " ".join(procstat['cmdline'])
         
@@ -601,7 +603,11 @@ class glancesStats:
         if psutil_mem_vm:
             # If PsUtil 0.6+
             phymem = psutil.virtual_memory()
-            self.mem = {'cache': phymem.cached + phymem.buffers,
+            if (hasattr(phymem, 'cached') and hasattr(phymem, 'buffers')):
+               cachemem = phymem.cached + phymem.buffers
+            else:
+               cachemem = 0
+            self.mem = {'cache': cachemem,
                         'total': phymem.total,
                         'used': phymem.used,
                         'free': phymem.free,
