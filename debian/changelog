@@ -1,6 +1,6 @@
-glances (1.4.2-1) UNRELEASED; urgency=low
+glances (1.4.2.1-1) UNRELEASED; urgency=low
 
-  * Imported Upstream version 1.4.2
+  * Imported Upstream version 1.4.2.1
   * Removed man page patch (fixed upstream)
   * Bumped Standards-Version to 3.9.4.0
 
