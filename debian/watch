@@ -1,3 +1,3 @@
 version=3
-opts=filenamemangle=s/^.*v([\d.]+)/glances-$1.tar.gz/ \
- http://github.com/nicolargo/glances/tags .*/glances/tarball/v(\d[\d\.]+)
+opts=filenamemangle=s/^.*v([\d\.]+)\.tar\.gz$/glances-$1.tar.gz/ \
+ http://github.com/nicolargo/glances/tags .*/glances/archive/v(\d[\d\.]+)\.tar.gz
