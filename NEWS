@@ -1,3 +1,25 @@
+Version 1.5.1
+=============
+
+    * Patch for PsUtil 0.4 compatibility
+    * Test PsUtil version before running Glances
+
+Version 1.5
+===========
+
+    * Add a client/server mode (XMLRPC) for remote monitoring 
+    * Correct a bug on process IO with non root users
+    * Add 'w' shortkey to delete finished warning message
+    * Add 'x' shortkey to delete finished warning/critical message
+    * Bugs correction
+    * Code optimization
+
+Version 1.4.2.2
+===============
+
+	* Add switch between bit/sec and byte/sec for network IO
+	* Add Changelog (generated with gitchangelog)
+
 Version 1.4.2.1
 ===============
 
