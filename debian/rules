@@ -30,7 +30,3 @@ override_dh_installdocs:
 	rm -f  debian/glances/usr/share/doc/glances/README-fr
 	rm -f  debian/glances/usr/share/doc/glances/screenshot.png
 	rm -rf debian/glances/usr/share/doc/glances/doc/
-
-# Fixed unknown-locale-code
-override_dh_install:
-	mv  debian/glances/usr/share/locale/pt-br debian/glances/usr/share/locale/pt_br
