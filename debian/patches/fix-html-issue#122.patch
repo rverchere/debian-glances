@@ -1,6 +1,7 @@
 Description: Fixed html template location
-Author: Kaliko Jack <kaliko@azylum.org>
-Bug: https://github.com/nicolargo/glances/issues/121
+Author: David GUENAULT <dguenault@monitoring-fr.org>
+Origin: upstream, https://github.com/nicolargo/glances/commit/94d016ab517a8ba5dd47a1bff7105d8ba7a8a4cc
+Bug: https://github.com/nicolargo/glances/issues/122
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 --- a/glances/glances.py
