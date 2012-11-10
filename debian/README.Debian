@@ -12,8 +12,8 @@ For instance:
 	glances -o html -f /tmp/glances
 
 
-Related issue on github tracker:
+Related issues on github tracker:
 	https://github.com/nicolargo/glances/issues/67
+	https://github.com/nicolargo/glances/issues/121
 
--- Geoffroy Youri Berret <efrim@azylum.org>  Fri, 14 Sep 2012 17:22:38 +0200
-
+-- Geoffroy Youri Berret <efrim@azylum.org>  Sat, 10 Nov 2012 13:50:11 +0100
