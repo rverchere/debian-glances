@@ -1,10 +1,9 @@
-HTML Output is not working (cf. github issue #67).
-It throws an exception because of a missing html template.
+HTML Output has some issues (cf. github issue #67 & #121).
 
-It is however possible to get it working. Glances should be run within a folder
-containing html, css and img folders. They are located in /usr/share/glances/
+The debian package ships relevant patches to fix these problems.
 
-For instance:
+To have a nice web page with proper style and images you still need to provide
+access to them. For instance:
 
 	mkdir /tmp/glances
 	cd /tmp/glances
