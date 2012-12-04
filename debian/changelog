@@ -1,4 +1,4 @@
-glances (1.5.1-1) UNRELEASED; urgency=low
+glances (1.5.1-1) unstable; urgency=low
 
   * Fixed watch file
   * Imported Upstream version 1.5.1
