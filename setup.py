@@ -23,8 +23,8 @@ for mo in glob('i18n/*/LC_MESSAGES/*.mo'):
     data_files.append((dirname(mo).replace('i18n/', 'share/locale/'), [mo]))
 
 setup(name='Glances',
-      version='1.5.1',
-      download_url='https://github.com/downloads/nicolargo/glances/glances-1.5.1.tar.gz',
+      version='1.5.2',
+      download_url='https://s3.amazonaws.com/glances/glances-1.5.2.tar.gz',
       url='https://github.com/nicolargo/glances',
       description='CLI curses-based monitoring tool',
       author='Nicolas Hennion',
@@ -35,7 +35,8 @@ setup(name='Glances',
       install_requires=['psutil>=0.4.1'],
       packages=['glances'],
       extras_require = {
-          'HTML':  ['jinja2>=2.0'],},
+          'HTML':  ['jinja2>=2.0'],
+          'SENSORS':  ['pysensors>=0.0.2'],},
       include_package_data=True,
       data_files=data_files,
       entry_points={"console_scripts": ["glances = glances.glances:main"]},
