@@ -1,9 +1,11 @@
 glances (1.5.2-1) UNRELEASED; urgency=low
 
   * Imported Upstream version 1.5.2
+  * Removed useless install files
   * Add patch to fix UnboundLocalError
+  * Backport patch fixing a typo (github #154)
 
- -- Geoffroy Youri Berret <efrim@azylum.org>  Mon, 31 Dec 2012 16:29:44 +0100
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Mon, 31 Dec 2012 17:13:33 +0100
 
 glances (1.5.1-1) unstable; urgency=low
 
