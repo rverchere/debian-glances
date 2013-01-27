@@ -3,11 +3,11 @@ Upstream-Name: glances
 Source: https://github.com/nicolargo/glances
 
 Files: *
-Copyright: 2012 Nicolas Hennion (aka) Nicolargo <nicolas@nicolargo.com>
+Copyright: 2012, 2013 Nicolas Hennion (aka) Nicolargo <nicolas@nicolargo.com>
 License: LGPL-3.0+
 
 Files: debian/*
-Copyright: 2012 Geoffroy Youri Berret <efrim@azylum.org>
+Copyright: 2012, 2013 Geoffroy Youri Berret <efrim@azylum.org>
            2012 Arnaud <arnaud.hartmann@nexys.fr>
 License: LGPL-3.0+
 
