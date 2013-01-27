@@ -27,6 +27,7 @@ override_dh_installdocs:
 	dh_installdocs
 	rm -f  debian/glances/usr/share/doc/glances/COPYING
 	rm -f  debian/glances/usr/share/doc/glances/AUTHORS
-	rm -f  debian/glances/usr/share/doc/glances/README-fr
 	rm -f  debian/glances/usr/share/doc/glances/screenshot.png
 	rm -rf debian/glances/usr/share/doc/glances/doc/
+	rm -rf debian/glances/usr/share/doc/glances/glances.conf
+	rm -rf debian/glances/usr/etc
