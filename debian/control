@@ -11,7 +11,10 @@ Homepage: http://nicolargo.github.com/glances/
 
 Package: glances
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python-psutil (>=0.4.1)
+Depends: ${misc:Depends}, ${python:Depends},
+    python-psutil (>=0.4.1),
+    adduser,
+    lsb-base
 Recommends: python-jinja2 (>=2.0)
 Description: CLI curses based monitoring tool
  Glances is a CLI curses based monitoring tool for GNU/Linux or BSD OS.
