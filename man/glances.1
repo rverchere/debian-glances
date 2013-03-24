@@ -1,12 +1,12 @@
-.TH glances 1  "January, 2013" "version 1.6" "USER COMMANDS"
+.TH glances 1  "January, 2013" "version 1.6.1" "USER COMMANDS"
 .SH NAME
 glances \- CLI curses based monitoring tool
 .SH SYNOPSIS
 .B glances
-[\-bdehmnsv] [\-C conffile] [\-t refresh] [\-B bind] [\-c server] [\-p port] [\-P password] [\-o output] [\-f file]
+[\-bdehmnsvz] [\-C conffile] [\-t refresh] [\-B bind] [\-c server] [\-p port] [\-P password] [\-o output] [\-f file]
 .SH DESCRIPTION
 Glances is a free (LGPL) curses-based  monitoring tool which aims to present a maximum of information
-in a minimum of space, ideally to fit in a classical 80x24 terminal or higher to have additionnal information. 
+in a minimum of space, ideally to fit in a classical 80x24 terminal or higher to have additionnal information.
 Glances can adapt dynamicaly the displayed information depending on the terminal size.
 It can also work in a client/server mode (for remote monitoring).
 .PP
@@ -61,7 +61,7 @@ Bind server to the given IP or host NAME
 Connect to a Glances server (IP address or hostname)
 .TP
 \-C conffile
-Use a configuration file (default is /etc/glances/glances.conf)
+Use a configuration file (default: {/usr/local,}/etc/glances/glances.conf)
 .TP
 \-d
 Disable disk I/O module
@@ -98,6 +98,9 @@ Set the refresh time in seconds (default: 3)
 .TP
 \-v
 Display the version and exit
+.TP
+\-z
+Do not use the bold color attribute
 .SH EXAMPLES
 .TP
 Refresh information every 5 seconds:
@@ -105,7 +108,7 @@ Refresh information every 5 seconds:
 \-t 5
 .PP
 .SH EXIT STATUS
-glances returns a zero exit status if it succeeds to print/grab information.
+Glances returns a zero exit status if it succeeds to print/grab information.
 .PP
 It returns 2 if it fails to parse its options (missing arguments, invalid value, etc).
 .SH AUTHOR

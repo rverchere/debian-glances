@@ -1,4 +1,5 @@
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/thing/484466/nicolargoglances-on-GitHub)
+[![Build Status](https://travis-ci.org/nicolargo/glances.png?branch=master)](https://travis-ci.org/nicolargo/glances)
 
 =============================
 Glances -- Eye on your system
@@ -16,11 +17,11 @@ It is developed in Python.
 
 Console (80x24) screenshot:
 
-![screenshot](https://github.com/nicolargo/glances/raw/master/screenshot.png)
+![screenshot](https://github.com/nicolargo/glances/raw/master/doc/screenshot.png)
 
 Wide terminal (> 90x24) screenshot:
 
-![screenshot](https://github.com/nicolargo/glances/raw/master/screenshot-wide.png)
+![screenshot](https://github.com/nicolargo/glances/raw/master/doc/screenshot-wide.png)
 
 ## Installation
 
@@ -60,8 +61,8 @@ Note: if you are behind an HTTP Proxy, you should use instead:
 ### From [Homebrew](http://mxcl.github.com/homebrew/) for Mac OS X
 
     $ brew install brew-pip
-	$ export PYTHONPATH=$(brew --prefix)/lib/python2.7/site-packages
-	$ brew pip Glances
+    $ export PYTHONPATH=$(brew --prefix)/lib/python2.7/site-packages
+    $ brew pip Glances
 
 If you have the following error:
 
@@ -73,6 +74,13 @@ then try to run:
     $ brew link Glances
 
 ### Concerning Windows operating system
+
+Thanks to Nicolas Bourges, a Windows installer is available:
+
+64 bits: https://s3.amazonaws.com/glances/glances-1.6.0-x64.exe
+32 bits: https://s3.amazonaws.com/glances/glances-1.6.0-x86.exe
+
+If you want to install it manually, please read the following procedure.
 
 Windows operating system only support the Glances in server mode. So if you ran Glances on Windows, it will be automaticaly running in server mode.
 
@@ -96,9 +104,9 @@ Glances use a standard GNU style installer (for a Debian like system):
     $ sudo apt-get update
     $ sudo apt-get install python-setuptools build-essential python-dev
     $ cd /tmp
-	$ tar zxvf glances-last.tgz
-	$ cd nicolargo-glances-*
-	$ sudo python setup.py install
+    $ tar zxvf glances-last.tgz
+    $ cd nicolargo-glances-*
+    $ sudo python setup.py install
 
 ## Configuration
 
@@ -106,7 +114,20 @@ No configuration is needed to use Glances.
 
 Furthermore, the release 1.6 introduces a configuration file to setup limits.
 
-The default configuration file is under the /etc/glances/glances.conf file.
+The default configuration file is under:
+
+    /etc/glances/glances.conf (Linux)
+or
+
+    /usr/local/etc/glances.conf (*BSD and OS X)
+
+To override the default configuration, you can copy the `glances.conf` file to
+your `$XDG_CONFIG_HOME` directory (e.g. Linux):
+
+    mkdir -p $XDG_CONFIG_HOME/glances
+    cp /etc/glances/glances.conf $XDG_CONFIG_HOME/glances/
+
+On OS X, you should copy the configuration file to `~/Library/Application Support/glances/`.
 
 ## Running
 
@@ -114,7 +135,7 @@ The default configuration file is under the /etc/glances/glances.conf file.
 
 If you want to monitor your local machine, just run:
 
-	$ glances
+    $ glances
 
 ### In client/server mode
 
@@ -138,7 +159,7 @@ In client mode, you can set the TCP port of the server (-p port).
 
 Default binding address is 0.0.0.0 (Glances will listen on all the networks interfaces) and TCP port is 61209.
 
-In client/server mode, limits are set by the server side. 
+In client/server mode, limits are set by the server side.
 
 The version 1.6 introduces a optionnal password to access to the server (-P password).
 
@@ -147,7 +168,7 @@ The version 1.6 introduces a optionnal password to access to the server (-P pass
 By default, stats are refreshed every second, to change this setting, you can
 use the -t option. For example to set the refresh rate to 5 seconds:
 
-	$ glances -t 5
+    $ glances -t 5
 
 Importants stats are colored:
 
