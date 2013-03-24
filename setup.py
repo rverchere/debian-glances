@@ -1,32 +1,37 @@
 #!/usr/bin/env python
 
-from glob import glob
-from os.path import dirname
+import os
+import sys
+import glob
 
 from setuptools import setup
 
 data_files = [
     ('share/man/man1', ['man/glances.1']),
-    ('share/doc/glances', ['README',
+    ('share/doc/glances', ['AUTHORS',
                            'COPYING',
-                           'AUTHORS',
                            'NEWS',
-                           'screenshot.png',
+                           'README',
                            'glances/conf/glances.conf']),
-    ('share/doc/glances/doc', glob('doc/*.png')),
-    ('etc/glances', ['glances/conf/glances.conf']),
-    ('share/glances/html', glob('glances/html/*.html')),
-    ('share/glances/css', glob('glances/css/*.css')),
-    ('share/glances/img', glob('glances/img/*.png')),
+    ('share/doc/glances/doc', glob.glob('doc/*.png')),
+    ('share/glances/css', glob.glob('glances/data/css/*.css')),
+    ('share/glances/html', glob.glob('glances/data/html/*.html')),
+    ('share/glances/img', glob.glob('glances/data/img/*.png')),
 ]
 
-for mo in glob('i18n/*/LC_MESSAGES/*.mo'):
-    data_files.append((dirname(mo).replace('i18n/', 'share/locale/'), [mo]))
+if hasattr(sys, 'real_prefix') or ('bsd' or 'darwin' in sys.platform):
+    etc_path = os.path.join(sys.prefix, 'etc', 'glances')
+if not hasattr(sys, 'real_prefix') and 'linux' in sys.platform:
+    etc_path = os.path.join('/etc', 'glances')
+data_files.append((etc_path, ['glances/conf/glances.conf']))
+
+for mo in glob.glob('i18n/*/LC_MESSAGES/*.mo'):
+    data_files.append((os.path.dirname(mo).replace('i18n/', 'share/locale/'), [mo]))
 
 setup(
     name='Glances',
-    version='1.6',
-    download_url='https://s3.amazonaws.com/glances/glances-1.6.tar.gz',
+    version='1.6.1',
+    download_url='https://s3.amazonaws.com/glances/glances-1.6.1.tar.gz',
     url='https://github.com/nicolargo/glances',
     description='CLI curses-based monitoring tool',
     author='Nicolas Hennion',
@@ -34,6 +39,7 @@ setup(
     license="LGPL",
     keywords="cli curses monitoring system",
     long_description=open('README').read(),
+    test_suite="glances.tests",
     install_requires=['psutil>=0.4.1'],
     packages=['glances'],
     extras_require={
