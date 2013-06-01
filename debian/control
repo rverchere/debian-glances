@@ -12,7 +12,7 @@ Homepage: http://nicolargo.github.com/glances/
 Package: glances
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends},
-    python-psutil (>=0.4.1),
+    python-psutil (>=0.7.0),
     adduser,
     lsb-base
 Recommends: python-jinja2 (>=2.0)
