@@ -3,5 +3,3 @@
 
 # Change to 'true' to have glances running at startup
 RUN="false"
-
-

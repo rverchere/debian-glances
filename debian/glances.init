@@ -17,7 +17,7 @@ DESC="Glances server"
 NAME=glances
 USER=$NAME
 DAEMON="/usr/bin/$NAME"
-PIDFILE="/var/run/$NAME.pid"
+PIDFILE="/run/$NAME/$NAME.pid"
 CONF="/etc/glances/glances.conf"
 DAEMON_ARGS="-C $CONF -s"
 
@@ -34,6 +34,14 @@ DAEMON_ARGS="-C $CONF -s"
 # Depend on lsb-base (>= 3.2-14) to ensure that this file is present
 # and status_of_proc is working.
 . /lib/lsb/init-functions
+
+# Ensure /run/glances is there, cf. Debian policy 9.4.1
+# http://www.debian.org/doc/debian-policy/ch-opersys.html#s-fhs-run
+if [ ! -d "$(dirname $PIDFILE)" ]; then
+    mkdir "$(dirname $PIDFILE)"
+    chown $USER:$USER "$(dirname $PIDFILE)"
+    chmod 755 "$(dirname $PIDFILE)"
+fi
 
 #
 # Function that starts the daemon/service
@@ -61,8 +69,7 @@ do_start()
         exit 0
     fi
 
-    start-stop-daemon --start --chuid $USER --pidfile=/tmp/glances.pid --quiet -m -b --exec $DAEMON -- $DAEMON_ARGS || return 2
-    mv /tmp/glances.pid $PIDFILE
+    start-stop-daemon --start --chuid $USER --pidfile=$PIDFILE --quiet -m -b --exec $DAEMON -- $DAEMON_ARGS || return 2
     [ -e "$PIDFILE" ] && chown $USER $PIDFILE
     return 0
 }
