@@ -1,20 +1,19 @@
-# Brazilian Portuguese translations for GLANCES package.
-# Copyright (C) 2012 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the GLANCES package.
-# Rafael Beraldo <rberaldo@cabaladada.org>, 2012.
+# Chinese translations for PACKAGE package.
+# Copyright (C) 2013 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# dongweiming <ciici123@gmail.com>, 2013.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Glances 1.4.1.1\n"
+"Project-Id-Version: Glances 1.7\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-16 15:15+0200\n"
-"PO-Revision-Date: 2012-09-20 01:53-0300\n"
-"Last-Translator: Rafael Beraldo <rberaldo@cabaladada.org>\n"
-"Language-Team: Brazilian Portuguese\n"
-"Language: pt_br\n"
+"PO-Revision-Date: 2013-07-28 13:20+0800\n"
+"Last-Translator: dongweiming <ciici123@gmail.com>\n"
+"Language-Team: Chinese (simplified)\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: glances/glances.py:946
@@ -23,7 +22,7 @@ msgstr ""
 
 #: glances/glances.py:1760
 msgid "Error: Cannot init the curses library.\n"
-msgstr ""
+msgstr "错误: 不能初始化curses库.\n"
 
 #: glances/glances.py:2327
 #, python-brace-format
@@ -37,12 +36,12 @@ msgstr ""
 
 #: glances/glances.py:2378
 msgid "PerCPU"
-msgstr ""
+msgstr "每CPU"
 
 #: glances/glances.py:2384 glances/glances.py:2438 glances/glances.py:2728
 #: glances/glances.py:2889 glances/glances.py:3272
 msgid "Compute data..."
-msgstr ""
+msgstr "计算数据..."
 
 #: glances/glances.py:2388 glances/glances.py:2448
 msgid "user:"
@@ -62,7 +61,7 @@ msgstr ""
 
 #: glances/glances.py:2432
 msgid "CPU"
-msgstr ""
+msgstr "CPU使用"
 
 #: glances/glances.py:2476
 msgid "nice:"
@@ -74,15 +73,15 @@ msgstr ""
 
 #: glances/glances.py:2517 glances/glances.py:3477
 msgid "Load"
-msgstr "Carga"
+msgstr ""
 
 #: glances/glances.py:2521
 msgid "-core"
-msgstr ""
+msgstr "核"
 
 #: glances/glances.py:2525
 msgid "1 min:"
-msgstr "1 min:"
+msgstr ""
 
 #: glances/glances.py:2532
 msgid "5 min:"
@@ -94,7 +93,7 @@ msgstr ""
 
 #: glances/glances.py:2568
 msgid "Mem"
-msgstr "Mem"
+msgstr ""
 
 #: glances/glances.py:2578 glances/glances.py:2664
 msgid "total:"
@@ -126,15 +125,15 @@ msgstr ""
 
 #: glances/glances.py:2652
 msgid "Swap"
-msgstr "Swap"
+msgstr ""
 
 #: glances/glances.py:2700
 msgid "Network"
-msgstr ""
+msgstr "网络"
 
 #: glances/glances.py:2723 glances/glances.py:2884
 msgid "Can not grab data..."
-msgstr ""
+msgstr "Can not grab data..."
 
 #: glances/glances.py:2811
 msgid "Sensors"
@@ -142,15 +141,15 @@ msgstr ""
 
 #: glances/glances.py:2814 glances/glances.py:2847
 msgid "°C"
-msgstr ""
+msgstr "度"
 
 #: glances/glances.py:2844
 msgid "HDD Temp"
-msgstr ""
+msgstr "硬盘温度"
 
 #: glances/glances.py:2873
 msgid "Disk I/O"
-msgstr "I/O do Disco"
+msgstr ""
 
 #: glances/glances.py:2877
 msgid "In/s"
@@ -162,15 +161,15 @@ msgstr ""
 
 #: glances/glances.py:2925
 msgid "Mount"
-msgstr "Partições"
+msgstr ""
 
 #: glances/glances.py:2929
 msgid "Used"
-msgstr "Usado"
+msgstr ""
 
 #: glances/glances.py:2931
 msgid "Total"
-msgstr "Total"
+msgstr ""
 
 #: glances/glances.py:2973
 msgid "WARNING|CRITICAL logs"
@@ -190,19 +189,19 @@ msgstr ""
 
 #: glances/glances.py:3078
 msgid "Processes (disabled)"
-msgstr ""
+msgstr "进程 (禁用)"
 
 #: glances/glances.py:3083
 msgid "Processes"
-msgstr ""
+msgstr "进程"
 
 #: glances/glances.py:3094
 msgid "running"
-msgstr ""
+msgstr "运行中"
 
 #: glances/glances.py:3096
 msgid "sleeping"
-msgstr ""
+msgstr "休眠中"
 
 #: glances/glances.py:3098
 msgid "other"
@@ -210,11 +209,11 @@ msgstr ""
 
 #: glances/glances.py:3104
 msgid "sorted automatically"
-msgstr ""
+msgstr "自动排序"
 
 #: glances/glances.py:3106
 msgid "sorted by "
-msgstr ""
+msgstr "排序方法: "
 
 #: glances/glances.py:3130
 msgid "RUNNING"
@@ -282,15 +281,15 @@ msgstr ""
 
 #: glances/glances.py:3412
 msgid "Connected to"
-msgstr ""
+msgstr "连接到"
 
 #: glances/glances.py:3415
 msgid "Disconnected from"
-msgstr ""
+msgstr "断开 从"
 
 #: glances/glances.py:3417
 msgid "Press 'h' for help"
-msgstr ""
+msgstr "按 'h' 获取帮助"
 
 #: glances/glances.py:3450
 #, python-brace-format
@@ -316,7 +315,7 @@ msgstr ""
 
 #: glances/glances.py:3472
 msgid "CRITICAL"
-msgstr "CRÍTICO"
+msgstr ""
 
 #: glances/glances.py:3476
 msgid "CPU user %"
@@ -340,15 +339,15 @@ msgstr ""
 
 #: glances/glances.py:3479
 msgid "Temp °C"
-msgstr ""
+msgstr "温度 °C"
 
 #: glances/glances.py:3479
 msgid "HDD Temp °C"
-msgstr ""
+msgstr "硬盘温度 °C"
 
 #: glances/glances.py:3480
 msgid "Filesystem %"
-msgstr ""
+msgstr "文件系统 %"
 
 #: glances/glances.py:3480
 msgid "CPU process %"
@@ -364,7 +363,7 @@ msgstr ""
 
 #: glances/glances.py:3536
 msgid "Sort processes automatically"
-msgstr ""
+msgstr "自动排序"
 
 #: glances/glances.py:3537
 msgid "c"
@@ -372,7 +371,7 @@ msgstr ""
 
 #: glances/glances.py:3537
 msgid "Sort processes by CPU%"
-msgstr ""
+msgstr "根据CPU使用率排序"
 
 #: glances/glances.py:3538
 msgid "m"
@@ -380,7 +379,7 @@ msgstr ""
 
 #: glances/glances.py:3538
 msgid "Sort processes by MEM%"
-msgstr ""
+msgstr "根据内存占用比排序"
 
 #: glances/glances.py:3539
 msgid "p"
@@ -388,7 +387,7 @@ msgstr ""
 
 #: glances/glances.py:3539
 msgid "Sort processes by name"
-msgstr ""
+msgstr "根据进程名字排序"
 
 #: glances/glances.py:3540
 msgid "i"
@@ -404,7 +403,7 @@ msgstr ""
 
 #: glances/glances.py:3541
 msgid "Show/hide disk I/O stats"
-msgstr ""
+msgstr "显示/隐藏硬盘I/O状态"
 
 #: glances/glances.py:3542
 msgid "f"
@@ -412,7 +411,7 @@ msgstr ""
 
 #: glances/glances.py:3542
 msgid "Show/hide file system stats"
-msgstr ""
+msgstr "显示/隐藏文件系统状态"
 
 #: glances/glances.py:3543
 msgid "n"
@@ -420,7 +419,7 @@ msgstr ""
 
 #: glances/glances.py:3543
 msgid "Show/hide network stats"
-msgstr ""
+msgstr "显示/隐藏network状态"
 
 #: glances/glances.py:3544
 msgid "s"
@@ -428,7 +427,7 @@ msgstr ""
 
 #: glances/glances.py:3544
 msgid "Show/hide sensors stats"
-msgstr ""
+msgstr "显示/隐藏sensors状态"
 
 #: glances/glances.py:3545
 msgid "y"
@@ -436,7 +435,7 @@ msgstr ""
 
 #: glances/glances.py:3545
 msgid "Show/hide hddtemp stats"
-msgstr ""
+msgstr "显示/隐藏hddtemp状态"
 
 #: glances/glances.py:3557
 msgid "l"
@@ -460,7 +459,7 @@ msgstr ""
 
 #: glances/glances.py:3559
 msgid "Delete warning logs"
-msgstr ""
+msgstr "删除警告日志"
 
 #: glances/glances.py:3560
 msgid "x"
@@ -468,7 +467,7 @@ msgstr ""
 
 #: glances/glances.py:3560
 msgid "Delete warning and critical logs"
-msgstr ""
+msgstr "删除警告和严重级别的日志"
 
 #: glances/glances.py:3561
 msgid "1"
@@ -476,7 +475,7 @@ msgstr ""
 
 #: glances/glances.py:3561
 msgid "Global CPU or per-CPU stats"
-msgstr ""
+msgstr "全局CPU或者每个CPU的状态"
 
 #: glances/glances.py:3562
 msgid "h"
@@ -512,7 +511,7 @@ msgstr ""
 
 #: glances/glances.py:3599 glances/glances.py:3993
 msgid "%Y-%m-%d %H:%M:%S"
-msgstr "%d-%m-%Y %H:%M:%S"
+msgstr ""
 
 #: glances/glances.py:3877
 #, python-format
@@ -521,19 +520,19 @@ msgstr ""
 
 #: glances/glances.py:4058
 msgid "Error: creating client socket"
-msgstr ""
+msgstr "错误: creating client socket"
 
 #: glances/glances.py:4067
 msgid "Error: Connection to server failed. Bad password."
-msgstr ""
+msgstr "错误: 连接服务端失败. 密码错误."
 
 #: glances/glances.py:4070
 msgid "Error: Connection to server failed. Unknown error."
-msgstr ""
+msgstr "错误: 连接服务端失败. 未知错误."
 
 #: glances/glances.py:4104
 msgid "Glances version"
-msgstr ""
+msgstr "Glances 版本"
 
 #: glances/glances.py:4104
 msgid " with PsUtil "
@@ -551,7 +550,7 @@ msgstr ""
 
 #: glances/glances.py:4111
 msgid "\t-b\t\tDisplay network rate in Byte per second"
-msgstr ""
+msgstr "\t-b\t\t显示每秒网络速率, 单位字节"
 
 #: glances/glances.py:4112
 msgid "\t-B @IP|host\tBind server to the given IPv4/IPv6 address or hostname"
@@ -564,11 +563,11 @@ msgstr ""
 
 #: glances/glances.py:4114
 msgid "\t-C file\t\tPath to the configuration file"
-msgstr ""
+msgstr "\t-C file\t\t配置文件的路径"
 
 #: glances/glances.py:4115
 msgid "\t-d\t\tDisable disk I/O module"
-msgstr ""
+msgstr "\t-d\t\t禁用硬盘 I/O模块"
 
 #: glances/glances.py:4116
 msgid "\t-e\t\tEnable sensors module"
@@ -584,15 +583,15 @@ msgstr ""
 
 #: glances/glances.py:4119
 msgid "\t-m\t\tDisable mount module"
-msgstr ""
+msgstr "\t-m\t\t禁用mount模块"
 
 #: glances/glances.py:4120
 msgid "\t-n\t\tDisable network module"
-msgstr ""
+msgstr "\t-n\t\t禁用网络模块"
 
 #: glances/glances.py:4121
 msgid "\t-o output\tDefine additional output (available: HTML or CSV)"
-msgstr ""
+msgstr "\t-o output\t定义额外的输出 (可选: HTML 或者 CSV)"
 
 #: glances/glances.py:4122
 #, python-format
@@ -609,7 +608,7 @@ msgstr ""
 
 #: glances/glances.py:4126
 msgid "\t-s\t\tRun Glances in server mode"
-msgstr ""
+msgstr "\t-s\t\t使用Glances服务端模式"
 
 #: glances/glances.py:4127
 #, python-format
@@ -618,7 +617,7 @@ msgstr ""
 
 #: glances/glances.py:4129
 msgid "\t-v\t\tDisplay the version and exit"
-msgstr ""
+msgstr "\t-v\t\t显示版本然后退出"
 
 #: glances/glances.py:4130
 msgid "\t-y\t\tEnable hddtemp module"
@@ -626,7 +625,7 @@ msgstr ""
 
 #: glances/glances.py:4131
 msgid "\t-z\t\tDo not use the bold color attribute"
-msgstr ""
+msgstr "\t-z\t\t不使用粗体颜色"
 
 #: glances/glances.py:4132
 msgid "\t-1\t\tStart Glances in per CPU mode"
@@ -634,261 +633,144 @@ msgstr ""
 
 #: glances/glances.py:4236
 msgid "Error: -P flag need an argument (password)"
-msgstr ""
+msgstr "错误: -P 需要一个参数 (你设置的密码)"
 
 #: glances/glances.py:4243
 msgid "Error: -B flag need an argument (bind IP address)"
-msgstr ""
+msgstr "错误: -B 需要一个参数 (绑定的IP地址)"
 
 #: glances/glances.py:4251
 msgid "Error: -c flag need an argument (server IP address/name)"
-msgstr ""
+msgstr "错误: -c 需要一个参数 (服务器IP地址或者主机名)"
 
 #: glances/glances.py:4262
 #, python-format
 msgid "Error: Unknown output %s"
-msgstr ""
+msgstr "错误: 未知输出 %s"
 
 #: glances/glances.py:4268
 msgid "Error: PySensors library not found"
-msgstr ""
+msgstr "错误: PySensors库没有找到"
 
 #: glances/glances.py:4273
 msgid "Error: Sensors module is only available on Linux"
-msgstr ""
+msgstr "错误: Sensors模块只可用在linux"
 
 #: glances/glances.py:4283
 msgid "Error: Refresh time should be a positive integer"
-msgstr ""
+msgstr "错误: 刷新时间必须是正整数"
 
 #: glances/glances.py:4309
 msgid "Error: Cannot use both -s and -c flag"
-msgstr ""
+msgstr "错误: 不能同时使用 -s 和 -c"
 
 #: glances/glances.py:4312
 msgid "Error: Cannot use both -s and -o flag"
-msgstr ""
+msgstr "错误: 不能同时使用 -s 和 -o"
 
 #: glances/glances.py:4317
 msgid "Error: Cannot use both -c and -o flag"
-msgstr ""
+msgstr "错误: 不能同时使用 -c 和 -o"
 
 #: glances/glances.py:4320
 msgid "Error: Cannot use both -c and -C flag"
-msgstr ""
+msgstr "错误: 不能同时使用 -c 和 -C"
 
 #: glances/glances.py:4321
 msgid "       Limits are set based on the server ones"
-msgstr ""
+msgstr "       基于服务端的限制被设置"
 
 #: glances/glances.py:4326
 msgid "Error: Need Jinja2 library to export into HTML"
-msgstr ""
+msgstr "错误: 导出HTML需要jinja2库"
 
 #: glances/glances.py:4327
 msgid "Try to install the python-jinja2 package"
-msgstr ""
+msgstr "尝试安装 python-jinja2"
 
 #: glances/glances.py:4332
 msgid ""
 "Error: HTML export (-o html) need output folder definition (-f <folder>)"
-msgstr ""
+msgstr "错误: 导出HTML (-o html) 需要定义文件夹 (-f <folder>)"
 
 #: glances/glances.py:4338
 msgid "Error: Need CSV library to export into CSV"
-msgstr ""
+msgstr "错误: 导出CSV 需要CSV库"
 
 #: glances/glances.py:4343
 msgid "Error: CSV export (-o csv) need output file definition (-f <file>)"
-msgstr ""
+msgstr "错误: 导出CSV (-o csv) 需要定义输出的文件 (-f <file>)"
 
 #: glances/glances.py:4370
 msgid "Glances server is running on"
-msgstr ""
+msgstr "Glances服务器启动了"
 
 #: glances/glances.py:4392
 msgid "Error: The server version is not compatible"
-msgstr ""
+msgstr "错误: 服务端的版本不兼容"
 
-#~ msgid "   OK   "
-#~ msgstr "   OK   "
+#~ msgid "Curses module not found. Glances cannot start."
+#~ msgstr "Curses 模块没有找到. Glances 不能开始."
 
-#~ msgid "CAREFUL "
-#~ msgstr "CUIDADO "
+#~ msgid "PsUtil module not found. Glances cannot start."
+#~ msgstr "PsUtil 模块没有找到. Glances 不能开始."
 
-#~ msgid "WARNING "
-#~ msgstr "AVISO"
+#~ msgid "PsUtil version %s detected."
+#~ msgstr "PsUtil 版本 %s 被检测到."
 
-#~ msgid "User:"
-#~ msgstr "Usuário:"
+#~ msgid "PsUtil 0.4.1 or higher is needed. Glances cannot start."
+#~ msgstr "需要0.4.1或者更高版本的PsUtil. Glances 不能开始."
 
-#~ msgid "Kernel:"
-#~ msgstr "Kernel:"
+#~ msgid "Sort processes by IO rate"
+#~ msgstr "根据IO速率排序"
 
-#~ msgid "Nice:"
-#~ msgstr "Nice:"
+#~ msgid "Show/hide log messages"
+#~ msgstr "显示/隐藏日志消息"
 
-#~ msgid "-Core"
-#~ msgstr "-Núcleo(s)"
+#~ msgid "Show/hide this help message"
+#~ msgstr "显示/隐藏帮助信息"
 
-#~ msgid "Total:"
-#~ msgstr "Total:"
+#~ msgid "View network IO as combination"
+#~ msgstr "查看网络IO组合 (进/出)"
 
-#~ msgid "Used:"
-#~ msgstr "Usado:"
+#~ msgid "View cumulative network IO"
+#~ msgstr "查看累积的网络IO信息"
 
-#~ msgid "Free:"
-#~ msgstr "Livre:"
+#~ msgid "Error: Connection to server failed. Can not get the server version."
+#~ msgstr "错误: 连接服务端失败. 无法获取服务端版本."
 
-#~ msgid "Textmode GUI initialization failed, Glances cannot start."
-#~ msgstr ""
-#~ "A inicialização da interface gráfica em modo texto falhou, o Glances não "
-#~ "pode iniciar."
+#~ msgid "Usage: glances [opt]"
+#~ msgstr "用法: glances [opt]"
 
-#~ msgid "Error: Can not init the libstatgrab library.\n"
-#~ msgstr "Erro: Não foi possível iniciar a biblioteca libstatgrab.\n"
+#~ msgid " with opt:"
+#~ msgstr " 可供选项:"
 
-#~ msgid "Error: Can not init the curses library.\n"
-#~ msgstr "Erro: Não foi possível iniciar a biblioteca curses.\n"
+#~ msgid "\t-B @IP|host\tBind server to the given IP or host NAME"
+#~ msgstr "\t-B @IP|host\t通过IP或者主机名绑定服务端"
 
-#~ msgid "Glances help (press 'h' to hide)"
-#~ msgstr "Ajuda do Glances (pressione 'h' para ocultar)"
+#~ msgid "\t-c @IP|host\tConnect to a Glances server"
+#~ msgstr "\t-c @IP|host\t连接到Glances服务端"
 
-#~ msgid "'h'\tto display|hide this help message"
-#~ msgstr "'h'\tpara mostrar|ocultar esta mensagem de ajuda"
+#~ msgid "\t-e\t\tEnable the sensors module (Linux-only)"
+#~ msgstr "\t-e\t\t启用sensors模块 (只可用于linux)"
 
-#~ msgid "'a'\tto sort processes automatically"
-#~ msgstr "'a'\tpara ordenar os processos automaticamente"
+#~ msgid "\t-f file\t\tSet the output folder (HTML) or file (CSV)"
+#~ msgstr "\t-f file\t\t设置输出的目录 (HTML) 或者文件 (CSV)"
 
-#~ msgid "'c'\tto sort processes by CPU consumption"
-#~ msgstr "'c'\tpara ordenar os processos por consumo de CPU"
+#~ msgid "\t-h\t\tDisplay the syntax and exit"
+#~ msgstr "\t-h\t\t显示语法然后退出"
 
-#~ msgid "'d'\tto disable|enable the disk IO stats"
-#~ msgstr "'d'\tpara desabilitar|habilitar as estatísticas de IO do disco"
+#~ msgid "\t-p PORT\t\tDefine the client or server TCP port (default: %d)"
+#~ msgstr "\t-p PORT\t\t 定义客户端/服务端的tcp端口(默认: %d)"
 
-#~ msgid "'f'\tto disable|enable the file system stats"
-#~ msgstr ""
-#~ "'f'\tpara desabilitar|habilitar as estatísticas do sistema de arquivos"
+#~ msgid "\t-P password\tClient/server password"
+#~ msgstr "\t-P password\t客户端/服务端密码"
 
-#~ msgid "'m'\tto sort processes by process size"
-#~ msgstr "'m'\tpara ordenar os processos pelo tamanho do processo"
+#~ msgid "\t-r\t\tDo not list processes (significant CPU use reduction)"
+#~ msgstr "\t-r\t\t不显示处理器 (significant CPU use reduction)"
 
-#~ msgid "'n'\tto disable|enable the network interfaces stats"
-#~ msgstr ""
-#~ "'n'\tpara desabilitar|habilitar as estatísticas das interfaces de rede"
+#~ msgid "\t-t sec\t\tSet the refresh time in seconds (default: %d)"
+#~ msgstr "\t-t sec\t\t设置刷新时间,单位秒 (默认: %d)"
 
-#~ msgid "'q'\tto exit Glances"
-#~ msgstr "'q'\tpara sair do Glances"
-
-#~ msgid "Glances v"
-#~ msgstr "Glances v"
-
-#~ msgid " running on "
-#~ msgstr " rodando em "
-
-#~ msgid "Cpu"
-#~ msgstr "Cpu"
-
-#~ msgid "Idle:"
-#~ msgstr "Ocioso:"
-
-#~ msgid "5 mins:"
-#~ msgstr "5 mins:"
-
-#~ msgid "15 mins:"
-#~ msgstr "15 mins:"
-
-#~ msgid "Mem MB"
-#~ msgstr "Mem MB"
-
-#~ msgid "Real"
-#~ msgstr "Real"
-
-#~ msgid "Net rate"
-#~ msgstr "Taxa da rede"
-
-#~ msgid "Rx/ps"
-#~ msgstr "Rx/ps"
-
-#~ msgid "Tx/ps"
-#~ msgstr "Tx/ps"
-
-#~ msgid "In/ps"
-#~ msgstr "In/ps"
-
-#~ msgid "Out/ps"
-#~ msgstr "Out/ps"
-
-#~ msgid "Process"
-#~ msgstr "Processo"
-
-#~ msgid "Running"
-#~ msgstr "Rodando"
-
-#~ msgid "Sleeping"
-#~ msgstr "Dormindo"
-
-#~ msgid "Other"
-#~ msgstr "Outro"
-
-#~ msgid "Number:"
-#~ msgstr "Número"
-
-#~ msgid "Size MB"
-#~ msgstr "Tamanho MB"
-
-#~ msgid "Res MB"
-#~ msgstr "Rec MB"
-
-#~ msgid "Name"
-#~ msgstr "Nome"
-
-#~ msgid "Glances version "
-#~ msgstr "Glances versão "
-
-#~ msgid "Usage: glances.py [-t|--time sec] [-h|--help] [-v|--version]"
-#~ msgstr "Uso: glances.py [-t|--time seg] [-h|--help] [-v|--version]"
-
-#~ msgid "\t-h:\tDisplay the syntax and exit"
-#~ msgstr "\t-h:\tMostra a sintaxe e sai"
-
-#~ msgid "\t-t sec:\tSet the refresh time in second default is 1"
-#~ msgstr "\t-t seg:\tAjusta o tempo de atualização em segundos, o padrão é 1"
-
-#~ msgid "\t-v:\tDisplay the version and exit"
-#~ msgstr "\t-v:\tMostra a versão e sai"
-
-#~ msgid "When Glances is running, you can press:"
-#~ msgstr "Quando o Glances estiver rodando, você pode pressionar:"
-
-#~ msgid ""
-#~ "'a' to set the automatic mode. The processes are sorted automatically"
-#~ msgstr ""
-#~ "'a' para ativar o modo automático. Os processos são ordenados "
-#~ "automaticamente"
-
-#~ msgid "'c' to sort the processes list by CPU consumption"
-#~ msgstr "'c' para ordenar a lista de processos pelo consumo de CPU"
-
-#~ msgid "'d' to disable or enable the disk IO stats"
-#~ msgstr "'d' para desabilitar ou habilitar as estatísticas de IO do disco"
-
-#~ msgid "'f' to disable or enable the file system stats"
-#~ msgstr ""
-#~ "'f' para desabilitar ou habilitar as estatísticas do sistema de arquivos"
-
-#~ msgid "'h' to hide or show the help message"
-#~ msgstr "'h' para ocultar ou mostrar a mensagem de ajuda"
-
-#~ msgid "'m' to sort the processes list by process size"
-#~ msgstr "'m' para ordenar a lista de processos pelo tamanho do processo"
-
-#~ msgid "'n' to disable or enable the network interfaces stats"
-#~ msgstr ""
-#~ "'n' para desabilitar ou habilitar as estatísticas das interfaces de rede"
-
-#~ msgid "'q' to exit"
-#~ msgstr "'q' para sair"
-
-#~ msgid "Error: Refresh time should be a positive non-null integer"
-#~ msgstr "Erro: O tempo de atualização deve ser um número inteiro não-nulo"
+#~ msgid "\t-y\t\tEnable the hddtemp module (needs running hddtemp daemon)"
+#~ msgstr "\t-y\t\t启动硬盘温度模块 (需要启动hddtemp的守护进程)"
