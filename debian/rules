@@ -21,12 +21,10 @@ override_dh_fixperms:
 	dh_fixperms -X/usr/share/glances/glances/glances.py
 	# TODO: how to keep glances.py executable :/
 	#       dh_fixperms exclusion seems not to be the way
-	chmod a+x debian/glances/usr/share/glances/glances/glances.py
+	#chmod a+x debian/glances/usr/share/glances/glances/glances.py
 
 override_dh_installdocs:
 	dh_installdocs
 	rm -f  debian/glances/usr/share/doc/glances/COPYING
 	rm -f  debian/glances/usr/share/doc/glances/AUTHORS
-	rm -rf debian/glances/usr/share/doc/glances/doc/
 	rm -rf debian/glances/usr/share/doc/glances/glances.conf
-	rm -rf debian/glances/usr/etc
