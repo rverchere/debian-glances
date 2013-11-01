@@ -1,13 +1,12 @@
-glances (1.6.1-1~1.gbp5282a9) UNRELEASED; urgency=low
+glances (1.7.2-1) UNRELEASED; urgency=low
 
-  ** SNAPSHOT build @5282a990837e2a8197a16395b8da4f2cce13d7ff **
-
-  * Imported Upstream version 1.6.1
-  * pre-merge cleanup
   * Add init scrip to start Glances server
-  * Depends on python-psutil 0.7.0
+  * Imported Upstream version 1.7.2
+  * Depends on python-psutil 0.5.1
+  * Fixed files location with latest release
+  * dh-python conversion
 
- -- Geoffroy Youri Berret <efrim@azylum.org>  Sat, 01 Jun 2013 14:55:31 +0200
+ -- Geoffroy Youri Berret <kaliko@marla.azylum.org>  Fri, 01 Nov 2013 16:01:03 +0100
 
 glances (1.6-1) unstable; urgency=low
 
