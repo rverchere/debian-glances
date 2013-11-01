@@ -24,7 +24,7 @@ Requirements
 ============
 
 - ``python >= 2.6`` (tested with version 2.6, 2.7, 3.2, 3.3)
-- ``psutil >= 0.4.1`` (recommended version >= 0.6)
+- ``psutil >= 0.5.1`` (recommended version >= 1.1.0)
 - ``jinja`` (optional for HTML output)
 - ``pysensors`` (optional for HW monitoring support) [Linux-only]
 - ``hddtemp`` (optional for HDD temperature monitoring support)
@@ -43,12 +43,6 @@ Glances is on `PyPI`_. To install, simply use `pip`_:
 
     pip install Glances
 
-*Note*:
-
-On Debian/Ubuntu, you need to install first the *python-dev* package.
-
-On CentOS/Fedora, you need to install first the *python-devel* package (from the EPEL repository).
-
 To upgrade Glances to the latest version:
 
 .. code-block:: console
@@ -58,7 +52,7 @@ To upgrade Glances to the latest version:
 Linux
 -----
 
-Actually, packages exist for Arch Linux, Fedora / CentOS / RHEL,
+Actually, packages exist for Arch Linux, Fedora/CentOS/RHEL,
 Debian (Sid/Testing) and Ubuntu (13.04+), so you should be able to
 install it using your favorite package manager.
 
@@ -115,7 +109,9 @@ MacPorts
 Windows
 -------
 
-Windows only support Glances in server mode. Glances will automatically run in server mode on it.
+Glances 1.7.2 proposes a Windows client based on the `colorconsole`_ Python library.
+
+Glances < 1.7.2 only works in server mode. It will run in server mode automatically.
 
 Thanks to Nicolas Bourges, Glances can be easily installed using a Windows installer:
 
@@ -126,6 +122,7 @@ Otherwise, you have to follow these steps:
 
 - Install Python for Windows: http://www.python.org/getit/
 - Install the psutil library: https://code.google.com/p/psutil/downloads/list
+- Install the colorconsole library: http://code.google.com/p/colorconsole/downloads/list
 - Download Glances from here: http://nicolargo.github.io/glances/
 
 Source
@@ -140,11 +137,11 @@ To install Glances from source:
     $ cd glances-*
     # python setup.py install
 
-*Note*:
+*Note*: Python headers are required to install psutil. For example, you need to install first:
 
-On Debian/Ubuntu, you need to install first the *python-dev* package.
-
-On CentOS/Fedora, you need to install first the *python-devel* package (from the EPEL repository).
+* On Debian/Ubuntu, the *python-dev* package
+* On CentOS/Fedora, the *python-devel* package (from the EPEL repository)
+* On openSUSE/SLES/SLED, the *python-devel* package (from Oss repository)
 
 Puppet
 ------
@@ -183,5 +180,6 @@ LGPL. See ``COPYING`` for more details.
 .. _MacPorts: https://www.macports.org/
 .. _glances-1.6.1-x86.exe: https://s3.amazonaws.com/glances/glances-1.6.1-x86.exe
 .. _glances-1.6.1-x64.exe: https://s3.amazonaws.com/glances/glances-1.6.1-x64.exe
+.. _colorconsole: https://pypi.python.org/pypi/colorconsole
 .. _Puppet: https://puppetlabs.com/puppet/what-is-puppet/
 .. _glances-doc: https://github.com/nicolargo/glances/blob/master/docs/glances-doc.rst
