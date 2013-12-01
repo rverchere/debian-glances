@@ -3,6 +3,7 @@ glances (1.7.2-1) UNRELEASED; urgency=low
   * Add init scrip to start Glances server
   * Imported Upstream version 1.7.2 (closes: #729393)
   * Depends on python-psutil >= 1.1.0
+  * Build depends on python-psutil
   * Fixed files location with latest release
   * dh-python conversion
 

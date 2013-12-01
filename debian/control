@@ -2,7 +2,8 @@ Source: glances
 Section: utils
 Priority: extra
 Maintainer: Geoffroy Youri Berret <efrim@azylum.org>
-Build-Depends: debhelper (>= 9), python, python-setuptools (>= 0.6), dh-python
+Build-Depends: debhelper (>= 9), python, python-setuptools (>= 0.6), dh-python,
+               python-psutil (>=1.1.0)
 Standards-Version: 3.9.4.0
 X-Python-Version: >= 2.6
 Vcs-Git: git://git.kaliko.me/glances.git
