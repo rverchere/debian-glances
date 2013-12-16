@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Glances an eye on your system
+# Glances - An eye on your system
 #
 # Copyright (C) 2013 Nicolargo <nicolas@nicolargo.com>
 #
@@ -19,7 +19,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 __appname__ = 'glances'
-__version__ = "1.7.2"
+__version__ = "1.7.3"
 __author__ = "Nicolas Hennion <nicolas@nicolargo.com>"
 __licence__ = "LGPL"
 
@@ -172,16 +172,16 @@ else:
     csv_lib_tag = True
 
 # path definitions
-local_path = os.path.dirname(os.path.realpath(__file__))
+work_path = os.path.realpath(os.path.dirname(__file__))
 appname_path = os.path.split(sys.argv[0])[0]
-sys_prefix = os.path.dirname(os.path.realpath(appname_path))
+sys_prefix = os.path.realpath(os.path.dirname(appname_path))
 
 # i18n
 locale.setlocale(locale.LC_ALL, '')
 gettext_domain = __appname__
 
 # get locale directory
-i18n_path = os.path.join(local_path, '..', 'i18n')
+i18n_path = os.path.realpath(os.path.join(work_path, '..', 'i18n'))
 sys_i18n_path = os.path.join(sys_prefix, 'share', 'locale')
 
 if os.path.exists(i18n_path):
@@ -239,7 +239,7 @@ if is_Windows and is_colorConsole:
 
     class Screen():
 
-        COLOR_DEFAULT_WIN = '0F'#07'#'0F'
+        COLOR_DEFAULT_WIN = '0F'  # 07'#'0F'
         COLOR_BK_DEFAULT = colorconsole.terminal.colors["BLACK"]
         COLOR_FG_DEFAULT = colorconsole.terminal.colors["WHITE"]
 
@@ -357,6 +357,7 @@ class Timer:
     """
     The timer class
     """
+
     def __init__(self, duration):
         self.started(duration)
 
@@ -374,6 +375,7 @@ class Config:
     :param location: the custom path to search for config file
     :type location: str or None
     """
+
     def __init__(self, location=None):
         self.location = location
         self.filename = 'glances.conf'
@@ -387,7 +389,15 @@ class Config:
         """
         for path in self.get_paths_list():
             if os.path.isfile(path) and os.path.getsize(path) > 0:
-                self.parser.read(path)
+                try:
+                    if sys.version_info >= (3, 2):
+                        self.parser.read(path, encoding='utf-8')
+                    else:
+                        self.parser.read(path)
+                except UnicodeDecodeError as e:
+                    print(_("Error decoding config file '%s': %s") % (path, e))
+                    sys.exit(1)
+
                 break
 
     def get_paths_list(self):
@@ -395,7 +405,7 @@ class Config:
         Get a list of config file paths, taking into account of the OS,
         priority and location.
 
-        * running from source: /path/to/glances/glances/conf
+        * running from source: /path/to/glances/conf
         * Linux: ~/.config/glances, /etc/glances
         * BSD: ~/.config/glances, /usr/local/etc/glances
         * Mac: ~/Library/Application Support/glances, /usr/local/etc/glances
@@ -403,18 +413,18 @@ class Config:
 
         The config file will be searched in the following order of priority:
             * /path/to/file (via -C flag)
-            * /path/to/glances/glances/conf
+            * /path/to/glances/conf
             * user's home directory (per-user settings)
             * {/usr/local,}/etc directory (system-wide settings)
         """
         paths = []
-        conf_path = os.path.join(local_path, 'conf', self.filename)
+        conf_path = os.path.realpath(os.path.join(work_path, '..', 'conf'))
 
         if self.location is not None:
             paths.append(self.location)
 
         if os.path.exists(conf_path):
-            paths.append(conf_path)
+            paths.append(os.path.join(conf_path, self.filename))
 
         if is_Linux or is_BSD:
             paths.append(os.path.join(
@@ -794,6 +804,7 @@ class glancesLogs:
     Logs is a list of list (stored in the self.logs_list var)
     See item description in the add function
     """
+
     def __init__(self):
         """
         Init the logs classe
@@ -941,6 +952,7 @@ class glancesGrabFs:
     """
     Get FS stats
     """
+
     def __init__(self):
         """
         Init FS stats
@@ -997,6 +1009,7 @@ class glancesGrabSensors:
     """
     Get sensors stats using the PySensors library
     """
+
     def __init__(self):
         """
         Init sensors stats
@@ -1117,6 +1130,7 @@ class GlancesGrabProcesses:
     """
     Get processed stats using the PsUtil lib
     """
+
     def __init__(self):
         """
         Init the io dict
@@ -1147,6 +1161,14 @@ class GlancesGrabProcesses:
         procstat['cpu_times'] = proc.get_cpu_times()
         procstat['cpu_percent'] = proc.get_cpu_percent(interval=0)
         procstat['nice'] = proc.get_nice()
+
+        # try:
+        #     # !!! High CPU consumption
+        #     procstat['tcp'] = len(proc.get_connections(kind="tcp"))
+        #     procstat['udp'] = len(proc.get_connections(kind="udp"))
+        # except:
+        #     procstat['tcp'] = 0
+        #     procstat['udp'] = 0
 
         # procstat['io_counters'] is a list:
         # [read_bytes, write_bytes, read_bytes_old, write_bytes_old, io_tag]
@@ -1220,6 +1242,7 @@ class glancesGrabBat:
     """
     Get batteries stats using the Batinfo librairie
     """
+
     def __init__(self):
         """
         Init batteries stats
@@ -1273,6 +1296,7 @@ class GlancesStats:
     """
     This class store, update and give stats
     """
+
     def __init__(self):
         """
         Init the stats
@@ -3334,6 +3358,7 @@ class glancesScreen:
             tag_status = False
             tag_proc_time = False
             tag_io = False
+            # tag_tcpudp = False
 
             if screen_x > process_x + 55:
                 tag_pid = True
@@ -3347,9 +3372,10 @@ class glancesScreen:
                 tag_proc_time = True
             if screen_x > process_x + 92:
                 tag_io = True
-
             if not psutil_get_io_counter_tag:
                 tag_io = False
+            # if screen_x > process_x + 107:
+            #     tag_tcpudp = True
 
             # VMS
             self.term_window.addnstr(
@@ -3413,6 +3439,18 @@ class glancesScreen:
                     format(_("IOW/s"), '>5'), 5,
                     self.getProcessColumnColor('io_counters', sortedby))
                 process_name_x += 6
+            # TCP/UDP
+            # if tag_tcpudp:
+            #     self.term_window.addnstr(
+            #         monitor_y + 2, process_x + process_name_x,
+            #         format(_("TCP"), '>5'), 5,
+            #         self.getProcessColumnColor('tcp', sortedby))
+            #     process_name_x += 6
+            #     self.term_window.addnstr(
+            #         monitor_y + 2, process_x + process_name_x,
+            #         format(_("UDP"), '>5'), 5,
+            #         self.getProcessColumnColor('udp', sortedby))
+            #     process_name_x += 6
             # PROCESS NAME
             self.term_window.addnstr(
                 monitor_y + 2, process_x + process_name_x,
@@ -3534,8 +3572,21 @@ class glancesScreen:
                             monitor_y + 3 + processes, process_x + 62,
                             format(self.__autoUnit(io_ws, low_precision=True),
                                    '>5'), 5)
-
-                # display process command line
+                # TCP/UDP connexion number
+                # if tag_tcpudp:
+                #     try:
+                #         processlist[processes]['tcp']
+                #         processlist[processes]['udp']
+                #     except:
+                #         pass
+                #     else:
+                #         self.term_window.addnstr(
+                #             monitor_y + 3 + processes, process_x + 68,
+                #             format(processlist[processes]['tcp'], '>5'), 5)
+                #         self.term_window.addnstr(
+                #             monitor_y + 3 + processes, process_x + 74,
+                #             format(processlist[processes]['udp'], '>5'), 5)
+                # Display process command line
                 max_process_name = screen_x - process_x - process_name_x
                 process_name = processlist[processes]['name']
                 process_cmdline = processlist[processes]['cmdline']
@@ -3757,6 +3808,7 @@ class glancesHtml:
     """
     This class manages the HTML output
     """
+
     def __init__(self, html_path, refresh_time=1):
         html_filename = 'glances.html'
         html_template = 'default.html'
@@ -3765,11 +3817,11 @@ class glancesHtml:
         # Set the HTML output file
         self.html_file = os.path.join(html_path, html_filename)
 
-        # Get the working path
-        self.work_path = self.get_work_path()
+        # Get data path
+        data_path = os.path.join(work_path, 'data')
 
-        # Set the templates path
-        template_path = os.path.join(self.work_path, 'html')
+        # Set the template path
+        template_path = os.path.join(data_path, 'html')
         environment = jinja2.Environment(
             loader=jinja2.FileSystemLoader(template_path),
             extensions=['jinja2.ext.loopcontrols'])
@@ -3785,27 +3837,6 @@ class glancesHtml:
             'WARNING': "bgcwarning fgcwarning",
             'CRITICAL': "bgcritical fgcritical"
         }
-
-    def get_work_path(self):
-        """
-        Get the working path
-
-        The data files will be searched in the following paths:
-            * /path/to/glances/glances/data (local)
-            * {/usr,/usr/local}/share/glances (system-wide)
-        """
-        # get local and system-wide data paths
-        data_path = os.path.join(local_path, 'data')
-        sys_data_path = os.path.join(sys_prefix, 'share', __appname__)
-
-        if os.path.exists(data_path):
-            work_path = data_path
-        elif os.path.exists(sys_data_path):
-            work_path = sys_data_path
-        else:
-            work_path = ""
-
-        return work_path
 
     def __getAlert(self, current=0, max=100):
         # If current < CAREFUL of max then alert = OK
@@ -3908,6 +3939,7 @@ class glancesCsv:
     """
     This class manages the CSV output
     """
+
     def __init__(self, cvsfile="./glances.csv", refresh_time=1):
         # Init refresh time
         self.__refresh_time = refresh_time
@@ -3949,7 +3981,7 @@ class GlancesXMLRPCHandler(SimpleXMLRPCRequestHandler):
     """
     Main XMLRPC handler
     """
-    rpc_paths = ('/RPC2',)
+    rpc_paths = ('/RPC2', )
 
     def end_headers(self):
         # Hack to add a specific header
@@ -4011,6 +4043,7 @@ class GlancesXMLRPCServer(SimpleXMLRPCServer):
     """
     Init a SimpleXMLRPCServer instance (IPv6-ready)
     """
+
     def __init__(self, bind_address, bind_port=61209,
                  requestHandler=GlancesXMLRPCHandler):
 
@@ -4028,6 +4061,7 @@ class GlancesInstance():
     """
     All the methods of this class are published as XML RPC methods
     """
+
     def __init__(self, cached_time=1):
         # cached_time is the minimum time interval between stats updates
         # i.e. XML/RPC calls will not retrieve updated info until the time
@@ -4152,6 +4186,7 @@ class GlancesServer():
     """
     This class creates and manages the TCP client
     """
+
     def __init__(self, bind_address, bind_port=61209,
                  requestHandler=GlancesXMLRPCHandler, cached_time=1):
         self.server = GlancesXMLRPCServer(bind_address, bind_port, requestHandler)
@@ -4183,6 +4218,7 @@ class GlancesClient():
     """
     This class creates and manages the TCP client
     """
+
     def __init__(self, server_address, server_port=61209,
                  username="glances", password=""):
         # Build the URI
@@ -4235,7 +4271,6 @@ class GlancesClient():
         else:
             return stats
 
-
 # Global def
 #===========
 
@@ -4249,22 +4284,23 @@ def printSyntax():
     print(_("Usage: glances [options]"))
     print(_("\nOptions:"))
     print(_("\t-b\t\tDisplay network rate in Byte per second"))
-    print(_("\t-B @IP|host\tBind server to the given IPv4/IPv6 address or hostname"))
-    print(_("\t-c @IP|host\tConnect to a Glances server by IPv4/IPv6 address or hostname"))
-    print(_("\t-C file\t\tPath to the configuration file"))
+    print(_("\t-B @IP|HOST\tBind server to the given IPv4/IPv6 address or hostname"))
+    print(_("\t-c @IP|HOST\tConnect to a Glances server by IPv4/IPv6 address or hostname"))
+    print(_("\t-C FILE\t\tPath to the configuration file"))
     print(_("\t-d\t\tDisable disk I/O module"))
     print(_("\t-e\t\tEnable sensors module"))
-    print(_("\t-f file\t\tSet the HTML output folder or CSV file"))
+    print(_("\t-f FILE\t\tSet the HTML output folder or CSV file"))
     print(_("\t-h\t\tDisplay the help and exit"))
     print(_("\t-m\t\tDisable mount module"))
     print(_("\t-n\t\tDisable network module"))
-    print(_("\t-o output\tDefine additional output (available: HTML or CSV)"))
+    print(_("\t-o OUTPUT\tDefine additional output (available: HTML or CSV)"))
     print(_("\t-p PORT\t\tDefine the client/server TCP port (default: %d)" %
             server_port))
-    print(_("\t-P password\tDefine a client/server password"))
+    print(_("\t-P PASSWORD\tDefine a client/server password"))
+    print(_("\t--password\tDefine a client/server password from the prompt"))
     print(_("\t-r\t\tDisable process list"))
     print(_("\t-s\t\tRun Glances in server mode"))
-    print(_("\t-t seconds\tSet refresh time in seconds (default: %d sec)" %
+    print(_("\t-t SECONDS\tSet refresh time in seconds (default: %d sec)" %
             refresh_time))
     print(_("\t-v\t\tDisplay the version and exit"))
     print(_("\t-y\t\tEnable hddtemp module"))
@@ -4293,6 +4329,28 @@ def end():
 
 def signal_handler(signal, frame):
     end()
+
+
+def getpassword(description='', confirm=False):
+    """
+    Read a password from the command line (with confirmation if confirm = True)
+    """
+    import getpass
+
+    if description != '':
+        sys.stdout.write("%s\n" % description)
+
+    password1 = getpass.getpass(_("Password: "))
+    if confirm:
+        password2 = getpass.getpass(_("Password (confirm): "))
+    else:
+        return password1
+
+    if password1 == password2:
+        return password1
+    else:
+        sys.stdout.write(_("[Warning] Passwords did not match, please try again...\n"))
+        return getpassword(description=description, confirm=confirm)
 
 
 def main():
@@ -4392,6 +4450,11 @@ def main():
                 sys.exit(2)
             server_ip = arg
         elif opt in ("-p", "--port"):
+            try:
+                port_number = int(arg)
+            except:
+                print("invalid port number argument: %s" % arg)
+                sys.exit(2)
             server_port = arg
         elif opt in ("-o", "--output"):
             if arg.lower() == "html":
@@ -4451,6 +4514,8 @@ def main():
         if html_tag or csv_tag:
             print(_("Error: Cannot use both -s and -o flag"))
             sys.exit(2)
+        if password == '':
+            password = getpassword(description=_("Define the password for the Glances server"), confirm=True)
 
     if client_tag:
         if html_tag or csv_tag:
@@ -4460,6 +4525,8 @@ def main():
             print(_("Error: Cannot use both -c and -C flag"))
             print(_("       Limits are set based on the server ones"))
             sys.exit(2)
+        if password == '':
+            password = getpassword(description=_("Enter the Glances server password"), confirm=False)
 
     if html_tag:
         if not html_lib_tag:

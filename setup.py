@@ -8,24 +8,20 @@ from setuptools import setup
 
 data_files = [
     ('share/doc/glances', ['AUTHORS', 'COPYING', 'NEWS', 'README.rst',
-                           'docs/glances-doc.html',
-                           'glances/conf/glances.conf']),
+                           'conf/glances.conf', 'docs/glances-doc.html']),
     ('share/doc/glances/images', glob.glob('docs/images/*.png')),
-    ('share/glances/css', glob.glob('glances/data/css/*.css')),
-    ('share/glances/html', glob.glob('glances/data/html/*.html')),
-    ('share/glances/img', glob.glob('glances/data/img/*.png')),
-    ('share/man/man1', ['docs/man/glances.1'])
+    ('share/man/man1', ['man/glances.1'])
 ]
 
 if hasattr(sys, 'real_prefix') or 'bsd' in sys.platform:
     conf_path = os.path.join(sys.prefix, 'etc', 'glances')
-if not hasattr(sys, 'real_prefix') and 'linux' in sys.platform:
+elif not hasattr(sys, 'real_prefix') and 'linux' in sys.platform:
     conf_path = os.path.join('/etc', 'glances')
 elif 'darwin' in sys.platform:
     conf_path = os.path.join('/usr/local', 'etc', 'glances')
 elif 'win32' in sys.platform:
     conf_path = os.path.join(os.environ.get('APPDATA'), 'glances')
-data_files.append((conf_path, ['glances/conf/glances.conf']))
+data_files.append((conf_path, ['conf/glances.conf']))
 
 for mo in glob.glob('i18n/*/LC_MESSAGES/*.mo'):
     data_files.append((os.path.dirname(mo).replace('i18n/', 'share/locale/'), [mo]))
@@ -37,13 +33,13 @@ else:
 
 setup(
     name='Glances',
-    version='1.7.2',
+    version='1.7.3',
     description="A cross-platform curses-based monitoring tool",
     long_description=open('README.rst').read(),
     author='Nicolas Hennion',
     author_email='nicolas@nicolargo.com',
     url='https://github.com/nicolargo/glances',
-    # Alternative download_url='https://s3.amazonaws.com/glances/glances-1.7.1.tar.gz',
+    # download_url='https://s3.amazonaws.com/glances/glances-1.7.3.tar.gz',
     license="LGPL",
     keywords="cli curses monitoring system",
     install_requires=requires,
