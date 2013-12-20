@@ -1,4 +1,4 @@
-glances (1.7.3-1) UNRELEASED; urgency=low
+glances (1.7.3-1) unstable; urgency=low
 
   * Add init scrip to start Glances server
   * Imported Upstream version 1.7.3 (closes: #729393)
