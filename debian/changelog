@@ -6,7 +6,7 @@ glances (1.7.3-1) unstable; urgency=low
   * Build depends on python-psutil
   * Fixed files location with latest release
   * dh-python conversion
-  * Bumped Standards-Version to 3.9.4.0 (no changes)
+  * Bumped Standards-Version to 3.9.5.0 (no changes)
 
  -- Geoffroy Youri Berret <kaliko@marla.azylum.org>  Fri, 01 Nov 2013 16:01:03 +0100
 
