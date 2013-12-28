@@ -1,3 +1,9 @@
+glances (1.7.3-2) UNRELEASED; urgency=medium
+
+  * Overriding test (closes: #733168)
+
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Sat, 28 Dec 2013 20:16:02 +0100
+
 glances (1.7.3-1) unstable; urgency=low
 
   * Add init scrip to start Glances server
@@ -8,7 +14,7 @@ glances (1.7.3-1) unstable; urgency=low
   * dh-python conversion
   * Bumped Standards-Version to 3.9.5.0 (no changes)
 
- -- Geoffroy Youri Berret <kaliko@marla.azylum.org>  Fri, 01 Nov 2013 16:01:03 +0100
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Fri, 01 Nov 2013 16:01:03 +0100
 
 glances (1.6-1) unstable; urgency=low
 
