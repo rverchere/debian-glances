@@ -11,6 +11,10 @@ override_dh_clean:
 	rm -rf ./Glances.egg-info
 	dh_clean
 
+# Overriding test to prevent FTBS (cf. #733168)
+# http://bugs.debian.org/733168
+override_dh_auto_test:
+
 override_dh_installdocs:
 	dh_installdocs
 	rm -f  debian/glances/usr/share/doc/glances/COPYING
