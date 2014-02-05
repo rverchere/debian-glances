@@ -1,2 +1,1 @@
-debian/wrapper/glances         usr/bin/
 conf/glances.conf              etc/glances/
