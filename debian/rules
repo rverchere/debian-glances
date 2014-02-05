@@ -5,7 +5,7 @@
 #export DH_VERBOSE=1
 
 %:
-	dh $@ --with python2 --buildsystem=pybuild
+	dh $@ --with python3 --buildsystem=pybuild
 
 override_dh_clean:
 	rm -rf ./Glances.egg-info
@@ -14,6 +14,12 @@ override_dh_clean:
 # Overriding test to prevent FTBS (cf. #733168)
 # http://bugs.debian.org/733168
 override_dh_auto_test:
+
+override_dh_install:
+	dh_install
+	# Move data out of /usr/lib
+	find debian/glances/usr/lib/ -type d -wholename "*glances/data" -exec rm -rf '{}' +;
+	cp -a glances/data debian/glances/usr/share/glances/
 
 override_dh_installdocs:
 	dh_installdocs
