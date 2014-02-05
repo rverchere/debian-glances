@@ -1,3 +1,9 @@
+Follow Glances on Twitter: `@nicolargo`_ or `@glances_system`_
+
+===============================
+Glances - An eye on your system
+===============================
+
 .. image:: https://api.flattr.com/button/flattr-badge-large.png
         :target: https://flattr.com/thing/484466/nicolargoglances-on-GitHub
 .. image:: https://travis-ci.org/nicolargo/glances.png?branch=master
@@ -5,16 +11,13 @@
 .. image:: https://badge.fury.io/py/Glances.png
         :target: http://badge.fury.io/py/Glances
 .. image:: https://pypip.in/d/Glances/badge.png
-        :target: https://crate.io/packages/Glances
-
-Follow Glances on twitter: `glances_system`_
-
-===============================
-Glances - An eye on your system
-===============================
-
+        :target: https://pypi.python.org/pypi/Glances/
+        :alt: Downloads
+.. image:: https://d2weczhvl823v0.cloudfront.net/nicolargo/glances/trend.png
+        :target: https://bitdeli.com/nicolargo 
 .. image:: https://raw.github.com/nicolargo/glances/master/docs/images/glances-white-256.png
         :width: 128
+        :align: center
 
 **Glances** is a cross-platform curses-based monitoring tool written in Python.
 
@@ -54,7 +57,7 @@ To upgrade Glances to the latest version:
 Linux
 -----
 
-Actually, packages exist for Arch Linux, Fedora/CentOS/RHEL,
+At the moment, packages exist for Arch Linux, Gentoo, Fedora/CentOS/RHEL,
 Debian (Sid/Testing) and Ubuntu (13.04+), so you should be able to
 install it using your favorite package manager.
 
@@ -84,22 +87,8 @@ Homebrew
 
 .. code-block:: console
 
-    $ brew install brew-pip
-    $ export PYTHONPATH=$(brew --prefix)/lib/python2.7/site-packages
-    $ brew pip Glances
-
-If you get the following error:
-
-.. code-block:: console
-
-    Error: Failed executing: pip install glances==X.X --install-option=--prefix=/usr/local/XXX/glances/X.X (.rb:)
-
-Try to run:
-
-.. code-block:: console
-
-    $ pip install glances==X.X --install-option=--prefix=/usr/local/XXX/glances/X.X
-    $ brew link Glances
+    $ brew install python
+    $ pip install Glances
 
 MacPorts
 ````````
@@ -158,7 +147,7 @@ Just run:
 
     $ glances
 
-and RTFM...
+and RTFM, always.
 
 Documentation
 =============
@@ -176,10 +165,11 @@ License
 LGPL. See ``COPYING`` for more details.
 
 .. _psutil: https://code.google.com/p/psutil/
-.. _glances_system: https://twitter.com/glances_system
+.. _@nicolargo: https://twitter.com/nicolargo
+.. _@glances_system: https://twitter.com/glances_system
 .. _PyPI: https://pypi.python.org/pypi
 .. _pip: http://www.pip-installer.org/
-.. _Homebrew: http://mxcl.github.com/homebrew/
+.. _Homebrew: http://brew.sh/
 .. _MacPorts: https://www.macports.org/
 .. _Glances-1.7.2-win32.msi: http://glances.s3.amazonaws.com/Glances-1.7.2-win32.msi
 .. _colorconsole: https://pypi.python.org/pypi/colorconsole

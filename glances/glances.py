@@ -3,7 +3,7 @@
 #
 # Glances - An eye on your system
 #
-# Copyright (C) 2013 Nicolargo <nicolas@nicolargo.com>
+# Copyright (C) 2014 Nicolargo <nicolas@nicolargo.com>
 #
 # Glances is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 __appname__ = 'glances'
-__version__ = "1.7.3"
+__version__ = "1.7.4"
 __author__ = "Nicolas Hennion <nicolas@nicolargo.com>"
 __licence__ = "LGPL"
 
@@ -359,10 +359,17 @@ class Timer:
     """
 
     def __init__(self, duration):
-        self.started(duration)
+        self.duration = duration
+        self.start()
 
-    def started(self, duration):
-        self.target = time.time() + duration
+    def start(self):
+        self.target = time.time() + self.duration
+
+    def reset(self):
+        self.start()
+
+    def set(self, duration):
+        self.duration = duration
 
     def finished(self):
         return time.time() > self.target
@@ -592,21 +599,28 @@ class monitorList:
 
 class glancesLimits:
     """
-    Manage the limit OK, CAREFUL, WARNING, CRITICAL for each stats
+    Manage limits for each stats. A limit can be:
+    * a set of careful, warning and critical values
+    * a filter (for example: hide some network interfaces)
 
     The limit list is stored in an hash table:
     __limits_list[STAT] = [CAREFUL, WARNING, CRITICAL]
 
     STD is for defaults limits (CPU/MEM/SWAP/FS)
     CPU_IOWAIT limits (iowait in %)
+    CPU_STEAL limits (steal in %)
     LOAD is for LOAD limits (5 min/15 min)
     TEMP is for sensors limits (temperature in °C)
     HDDTEMP is for hddtemp limits (temperature in °C)
+    FS is for partitions space limits
+    IODISK_HIDE is a list of disk (name) to hide
+    NETWORK_HIDE is a list of network interface (name) to hide
     """
     __limits_list = {'STD': [50, 70, 90],
                      'CPU_USER': [50, 70, 90],
                      'CPU_SYSTEM': [50, 70, 90],
                      'CPU_IOWAIT': [40, 60, 80],
+                     'CPU_STEAL': [10, 15, 20],
                      'LOAD': [0.7, 1.0, 5.0],
                      'MEM': [50, 70, 90],
                      'SWAP': [50, 70, 90],
@@ -614,7 +628,9 @@ class glancesLimits:
                      'HDDTEMP': [45, 52, 60],
                      'FS': [50, 70, 90],
                      'PROCESS_CPU': [50, 70, 90],
-                     'PROCESS_MEM': [50, 70, 90]}
+                     'PROCESS_MEM': [50, 70, 90],
+                     'IODISK_HIDE': [],
+                     'NETWORK_HIDE': []}
 
     def __init__(self):
         # Test if the configuration file has a limits section
@@ -634,6 +650,9 @@ class glancesLimits:
             self.__setLimits('CPU_IOWAIT', 'cpu', 'iowait_careful')
             self.__setLimits('CPU_IOWAIT', 'cpu', 'iowait_warning')
             self.__setLimits('CPU_IOWAIT', 'cpu', 'iowait_critical')
+            self.__setLimits('CPU_STEAL', 'cpu', 'steal_careful')
+            self.__setLimits('CPU_STEAL', 'cpu', 'steal_warning')
+            self.__setLimits('CPU_STEAL', 'cpu', 'steal_critical')
         if config.has_section('load'):
             # Read LOAD limits
             self.__setLimits('LOAD', 'load', 'careful')
@@ -672,6 +691,24 @@ class glancesLimits:
             self.__setLimits('PROCESS_MEM', 'process', 'mem_careful')
             self.__setLimits('PROCESS_MEM', 'process', 'mem_warning')
             self.__setLimits('PROCESS_MEM', 'process', 'mem_critical')
+        if config.has_section('iodisk'):
+            # Hidden disks' list
+            self.__setHidden('IODISK_HIDE', 'iodisk', 'hide')
+        if config.has_section('network'):
+            # Network interfaces' list
+            self.__setHidden('NETWORK_HIDE', 'network', 'hide')
+
+    def __setHidden(self, stat, section, alert='hide'):
+        """
+        stat: 'IODISK', 'NETWORK'
+        section: 'iodisk', 'network'
+        alert: 'hide'
+        """
+        value = config.get_raw_option(section, alert)
+
+        # print("%s / %s = %s -> %s" % (section, alert, value, stat))
+        if (value is not None):
+            self.__limits_list[stat] = value.split(",")
 
     def __setLimits(self, stat, section, alert):
         """
@@ -681,7 +718,7 @@ class glancesLimits:
         """
         value = config.get_option(section, alert)
 
-        #~ print("%s / %s = %s -> %s" % (section, alert, value, stat))
+        # print("%s / %s = %s -> %s" % (section, alert, value, stat))
         if alert.endswith('careful'):
             self.__limits_list[stat][0] = value
         elif alert.endswith('warning'):
@@ -695,6 +732,14 @@ class glancesLimits:
 
     def getAll(self):
         return self.__limits_list
+
+    def getHide(self, stat):
+        try:
+            self.__limits_list[stat]
+        except KeyError:
+            return []
+        else:
+            return self.__limits_list[stat]
 
     def getCareful(self, stat):
         return self.__limits_list[stat][0]
@@ -1131,12 +1176,20 @@ class GlancesGrabProcesses:
     Get processed stats using the PsUtil lib
     """
 
-    def __init__(self):
+    def __init__(self, cache_timeout = 60):
         """
-        Init the io dict
-        key = pid
-        value = [ read_bytes_old, write_bytes_old ]
+        Init the class to collect stats about processes
         """
+        # Add internals caches because PSUtil do not cache all the stats
+        # See: https://code.google.com/p/psutil/issues/detail?id=462
+        self.username_cache = {}
+        self.cmdline_cache = {}
+        # The internals caches will be cleaned each 'cache_timeout' seconds
+        self.cache_timeout = cache_timeout
+        self.cache_timer = Timer(self.cache_timeout)
+        # Init the io dict
+        # key = pid
+        # value = [ read_bytes_old, write_bytes_old ]
         self.io_old = {}
 
     def __get_process_stats(self, proc):
@@ -1145,31 +1198,56 @@ class GlancesGrabProcesses:
         """
         procstat = {}
 
-        procstat['name'] = proc.name
+        # Process ID
         procstat['pid'] = proc.pid
+
+        # Process name (cached by PSUtil)
+        procstat['name'] = proc.name
+
+        # Process username (cached with internal cache)
         try:
-            procstat['username'] = proc.username
-        except KeyError:
+            self.username_cache[procstat['pid']]
+        except:
             try:
-                procstat['username'] = proc.uids.real
+                self.username_cache[procstat['pid']] = proc.username
             except KeyError:
-                procstat['username'] = "?"
-        procstat['cmdline'] = ' '.join(proc.cmdline)
-        procstat['memory_info'] = proc.get_memory_info()
-        procstat['memory_percent'] = proc.get_memory_percent()
+                try:
+                    self.username_cache[procstat['pid']] = proc.uids.real
+                except KeyError:
+                    self.username_cache[procstat['pid']] = "?"
+        procstat['username'] = self.username_cache[procstat['pid']]
+
+        # Process command line (cached with internal cache)
+        try:
+            self.cmdline_cache[procstat['pid']]
+        except:
+            self.cmdline_cache[procstat['pid']] = ' '.join(proc.cmdline)
+        procstat['cmdline'] = self.cmdline_cache[procstat['pid']]
+
+        # Process status
         procstat['status'] = str(proc.status)[:1].upper()
-        procstat['cpu_times'] = proc.get_cpu_times()
-        procstat['cpu_percent'] = proc.get_cpu_percent(interval=0)
+
+        # Process nice
         procstat['nice'] = proc.get_nice()
 
+        # Process memory
+        procstat['memory_info'] = proc.get_memory_info()
+        procstat['memory_percent'] = proc.get_memory_percent()
+
+        # Process CPU
+        procstat['cpu_times'] = proc.get_cpu_times()
+        procstat['cpu_percent'] = proc.get_cpu_percent(interval=0)
+
+        # Process network connections (TCP and UDP) (Experimental)
+        # !!! High CPU consumption
         # try:
-        #     # !!! High CPU consumption
         #     procstat['tcp'] = len(proc.get_connections(kind="tcp"))
         #     procstat['udp'] = len(proc.get_connections(kind="udp"))
         # except:
         #     procstat['tcp'] = 0
         #     procstat['udp'] = 0
 
+        # Process IO
         # procstat['io_counters'] is a list:
         # [read_bytes, write_bytes, read_bytes_old, write_bytes_old, io_tag]
         # If io_tag = 0 > Access denied (display "?")
@@ -1202,13 +1280,17 @@ class GlancesGrabProcesses:
 
     def update(self):
         self.processlist = []
-        self.processcount = {'total': 0, 'running': 0, 'sleeping': 0}
+        self.processcount = {'total': 0, 'running': 0, 'sleeping': 0, 'thread': 0}
 
+        # Get the time since last update
         time_since_update = getTimeSinceLastUpdate('process_disk')
+
         # For each existing process...
         for proc in psutil.process_iter():
             try:
+                # Get stats using the PSUtil
                 procstat = self.__get_process_stats(proc)
+                # Add a specific time_since_update stats for bitrate
                 procstat['time_since_update'] = time_since_update
                 # ignore the 'idle' process on Windows and *BSD
                 # ignore the 'kernel_task' process on OS X
@@ -1217,7 +1299,7 @@ class GlancesGrabProcesses:
                     is_Windows and procstat['name'] == 'System Idle Process' or
                     is_Mac and procstat['name'] == 'kernel_task'):
                     continue
-                # Update processcount (global stattistics)
+                # Update processcount (global statistics)
                 try:
                     self.processcount[str(proc.status)] += 1
                 except KeyError:
@@ -1225,11 +1307,23 @@ class GlancesGrabProcesses:
                     self.processcount[str(proc.status)] = 1
                 else:
                     self.processcount['total'] += 1
+                # Update thread number (global statistics)
+                try:
+                    self.processcount['thread'] += proc.get_num_threads()
+                except:
+                    pass
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
             else:
                 # Update processlist
                 self.processlist.append(procstat)
+
+        # Clean internals caches if timeout is reached
+        if (self.cache_timer.finished()):
+            self.username_cache = {}
+            self.cmdline_cache = {}
+            # Restart the timer
+            self.cache_timer.reset()
 
     def getcount(self):
         return self.processcount
@@ -1382,6 +1476,8 @@ class GlancesStats:
             cputime_total += cputime.irq
         if hasattr(cputime, 'softirq'):
             cputime_total += cputime.softirq
+        if hasattr(cputime, 'steal'):
+            cputime_total += cputime.steal
         if not hasattr(self, 'cputime_old'):
             self.cputime_old = cputime
             self.cputime_total_old = cputime_total
@@ -1407,6 +1503,12 @@ class GlancesStats:
                 if hasattr(self.cputime_new, 'irq'):
                     self.cpu['irq'] = (self.cputime_new.irq -
                                        self.cputime_old.irq) * percent
+                if hasattr(self.cputime_new, 'softirq'):
+                    self.cpu['softirq'] = (self.cputime_new.softirq -
+                                           self.cputime_old.softirq) * percent
+                if hasattr(self.cputime_new, 'steal'):
+                    self.cpu['steal'] = (self.cputime_new.steal -
+                                         self.cputime_old.steal) * percent
                 self.cputime_old = self.cputime_new
                 self.cputime_total_old = self.cputime_total_new
             except Exception:
@@ -1432,6 +1534,9 @@ class GlancesStats:
         for i in range(len(percputime)):
             if hasattr(percputime[i], 'softirq'):
                 percputime_total[i] += percputime[i].softirq
+        for i in range(len(percputime)):
+            if hasattr(percputime[i], 'steal'):
+                percputime_total[i] += percputime[i].steal
         if not hasattr(self, 'percputime_old'):
             self.percputime_old = percputime
             self.percputime_total_old = percputime_total
@@ -1463,6 +1568,9 @@ class GlancesStats:
                     if hasattr(self.percputime_new[i], 'softirq'):
                         cpu['softirq'] = (self.percputime_new[i].softirq -
                                           self.percputime_old[i].softirq) * perpercent[i]
+                    if hasattr(self.percputime_new[i], 'steal'):
+                        cpu['steal'] = (self.percputime_new[i].steal -
+                                        self.percputime_old[i].steal) * perpercent[i]
                     self.percpu.append(cpu)
                 self.percputime_old = self.percputime_new
                 self.percputime_total_old = self.percputime_total_new
@@ -1659,6 +1767,15 @@ class GlancesStats:
                 self.processcount = processcount
                 self.process = process
 
+        # Uptime
+        try:
+            # For PsUtil >= 0.7.0
+            self.uptime = datetime.now() - datetime.fromtimestamp(psutil.get_boot_time())
+        except:
+            self.uptime = datetime.now() - datetime.fromtimestamp(psutil.BOOT_TIME)
+        # Convert uptime to string (because datetime is not JSONifi)
+        self.uptime = str(self.uptime).split('.')[0]
+
         # Get the current date/time
         self.now = datetime.now()
 
@@ -1796,6 +1913,9 @@ class GlancesStats:
     def getNow(self):
         return self.now
 
+    def getUptime(self):
+        return self.uptime
+
 
 class GlancesStatsServer(GlancesStats):
 
@@ -1829,6 +1949,7 @@ class GlancesStatsServer(GlancesStats):
         self.all_stats["process"] = self.process if process_tag else []
         self.all_stats["core_number"] = self.core_number
         self.all_stats["psutil_version"] = self.psutil_version
+        self.all_stats["uptime"] = self.uptime
 
         # Get the current date/time
         self.now = datetime.now()
@@ -1881,6 +2002,10 @@ class GlancesStatsClient(GlancesStats):
             self.process = input_stats["process"]
             self.core_number = input_stats["core_number"]
             self.psutil_version = input_stats["psutil_version"]
+            try:
+                self.uptime = input_stats["uptime"]
+            except Exception:
+                self.uptime = None
 
         # Get the current date/time
         self.now = datetime.now()
@@ -1904,6 +2029,8 @@ class glancesScreen:
         self.term_h = 24
         self.system_x = 0
         self.system_y = 0
+        self.uptime_x = 79
+        self.uptime_y = 0
         self.cpu_x = 0
         self.cpu_y = 2
         self.load_x = 17
@@ -2104,7 +2231,7 @@ class glancesScreen:
         # If current > CAREFUL of max then alert = CAREFUL
         # If current > WARNING of max then alert = WARNING
         # If current > CRITICAL of max then alert = CRITICAL
-        # stat is USER, SYSTEM or IOWAIT
+        # stat is USER, SYSTEM, IOWAIT or STEAL
         try:
             variable = (current * 100) / max
         except ZeroDivisionError:
@@ -2430,7 +2557,7 @@ class glancesScreen:
 
         if not self.help_tag:
             # Display stats
-            self.displaySystem(stats.getHost(), stats.getSystem())
+            self.displaySystem(stats.getHost(), stats.getSystem(), stats.getUptime())
             cpu_offset = self.displayCpu(stats.getCpu(), stats.getPerCpu(), processlist)
             self.displayLoad(stats.getLoad(), stats.getCore(), processlist, cpu_offset)
             self.displayMem(stats.getMem(), stats.getMemSwap(), processlist, cpu_offset)
@@ -2490,26 +2617,48 @@ class glancesScreen:
             # Wait 100ms...
             curses.napms(100)
 
-    def displaySystem(self, host, system):
+    def displaySystem(self, host, system, uptime):
         # System information
         if not host or not system:
             return 0
         screen_x = self.screen.getmaxyx()[1]
         screen_y = self.screen.getmaxyx()[0]
+        # Host + OS informations
         if host['os_name'] == "Linux":
-            system_msg = _("{0} {1} with {2} {3} on {4}").format(
+            system_msg = _("{0} ({1} {2} / {3} {4})").format(
+                host['hostname'],
                 system['linux_distro'], system['platform'],
-                system['os_name'], system['os_version'],
-                host['hostname'])
+                system['os_name'], system['os_version'])
         else:
-            system_msg = _("{0} {1} {2} on {3}").format(
+            system_msg = _("{0} ({1} {2} {3})").format(
+                host['hostname'],
                 system['os_name'], system['os_version'],
-                system['platform'], host['hostname'])
-        if (screen_y > self.system_y and
-            screen_x > self.system_x + len(system_msg)):
-            center = (screen_x // 2) - len(system_msg) // 2
-            self.term_window.addnstr(self.system_y, self.system_x + center,
-                                     system_msg, 80, curses.A_UNDERLINE)
+                system['platform'])
+        # System uptime
+        if uptime:
+            uptime_msg = _("Uptime: {0}").format(uptime)
+        else:
+            uptime_msg = ""
+        # Display
+        if (screen_y > self.system_y):
+            if (screen_x > self.system_x + len(system_msg) + len(uptime_msg)):
+                center = ((screen_x - len(uptime_msg)) // 2) - len(system_msg) // 2
+                self.term_window.addnstr(self.system_y, self.system_x + center,
+                                         system_msg, 80, curses.A_UNDERLINE)
+                try:
+                    self.term_window.addnstr(self.uptime_y, screen_x - len(uptime_msg),
+                                             uptime_msg, 80)
+                except:
+                    return len(system_msg)
+                else:
+                    return len(system_msg) + len(uptime_msg)
+            elif (screen_x > self.system_x + len(system_msg)):
+                center = (screen_x // 2) - len(system_msg) // 2
+                self.term_window.addnstr(self.system_y, self.system_x + center,
+                                         system_msg, 80, curses.A_UNDERLINE)
+                return len(system_msg)
+            else:
+                return 0
 
     def displayCpu(self, cpu, percpu, proclist):
         # Get screen size
@@ -2544,6 +2693,9 @@ class glancesScreen:
             if 'iowait' in cpu:
                 logs.add(self.__getCpuAlert(cpu['iowait'], stat="IOWAIT"), "CPU IOwait",
                          cpu['iowait'], proclist)
+            if 'steal' in cpu:
+                logs.add(self.__getCpuAlert(cpu['steal'], stat="STEAL"), "CPU steal",
+                         cpu['steal'], proclist)
 
         # Display per-CPU stats
         if screen_y > self.cpu_y + 5 and tag_percpu:
@@ -2640,8 +2792,17 @@ class glancesScreen:
 
             # display extended CPU stats when space is available
             if screen_y > self.cpu_y + 5 and tag_extendedcpu:
+                y = 0
+                if 'steal' in cpu:
+                    # Steal time (Linux) for VM guests
+                    self.term_window.addnstr(self.cpu_y + y, self.cpu_x + 16,
+                                             _("steal:"), 6)
+                    self.term_window.addnstr(
+                        self.cpu_y + y, self.cpu_x + 24,
+                        format(cpu['steal'] / 100, '>6.1%'), 6,
+                        self.__getCpuColor(cpu['steal'], stat='steal'))
 
-                y = 1
+                y += 1
                 if 'nice' in cpu:
                     # nice
                     self.term_window.addnstr(self.cpu_y + y, self.cpu_x + 16,
@@ -2663,10 +2824,10 @@ class glancesScreen:
 
                 if 'irq' in cpu:
                     # irq (Linux, FreeBSD)
-                    self.term_window.addnstr(self.cpu_y + 3, self.cpu_x + 16,
+                    self.term_window.addnstr(self.cpu_y + y, self.cpu_x + 16,
                                              _("irq:"), 4)
                     self.term_window.addnstr(
-                        self.cpu_y + 3, self.cpu_x + 24,
+                        self.cpu_y + y, self.cpu_x + 24,
                         format(cpu['irq'] / 100, '>6.1%'), 6)
                     y += 1
 
@@ -2907,70 +3068,73 @@ class glancesScreen:
                 return 3
 
             # Adapt the maximum interface to the screen
-            ret = 2
-            net_num = min(screen_y - self.network_y - 3, len(network))
-            for i in range(0, net_num):
+            net_max = min(screen_y - self.network_y - 3, len(network))
+            net_count = 0
+            for i in range(0, net_max):
                 elapsed_time = max(1, self.__refresh_time)
 
                 # network interface name
                 #~ ifname = network[i]['interface_name'].encode('ascii', 'ignore').split(':')[0]
                 ifname = network[i]['interface_name'].split(':')[0]
-                if len(ifname) > 8:
-                    ifname = '_' + ifname[-8:]
-                self.term_window.addnstr(self.network_y + 1 + i,
-                                         self.network_x, ifname, 8)
 
-                # Byte/s or bit/s
-                if self.net_byteps_tag:
-                    rx_per_sec = self.__autoUnit(network[i]['rx'] // elapsed_time)
-                    tx_per_sec = self.__autoUnit(network[i]['tx'] // elapsed_time)
-                    # Combined, or total network traffic
-                    # cx is combined rx + tx
-                    cx_per_sec = self.__autoUnit(network[i]['cx'] // elapsed_time)
-                    cumulative_rx = self.__autoUnit(network[i]['cumulative_rx'])
-                    cumulative_tx = self.__autoUnit(network[i]['cumulative_tx'])
-                    cumulative_cx = self.__autoUnit(network[i]['cumulative_cx'])
+                if (ifname not in limits.getHide('NETWORK_HIDE')):
+                    net_count += 1
 
-                else:
-                    rx_per_sec = self.__autoUnit(
-                        network[i]['rx'] // elapsed_time * 8) + "b"
-                    tx_per_sec = self.__autoUnit(
-                        network[i]['tx'] // elapsed_time * 8) + "b"
-                    # cx is combined rx + tx
-                    cx_per_sec = self.__autoUnit(
-                        network[i]['cx'] // elapsed_time * 8) + "b"
-                    cumulative_rx = self.__autoUnit(
-                        network[i]['cumulative_rx'] * 8) + "b"
-                    cumulative_tx = self.__autoUnit(
-                        network[i]['cumulative_tx'] * 8) + "b"
-                    cumulative_cx = self.__autoUnit(
-                        network[i]['cumulative_cx'] * 8) + "b"
+                    if len(ifname) > 8:
+                        ifname = '_' + ifname[-8:]
+                    self.term_window.addnstr(self.network_y + net_count,
+                                             self.network_x, ifname, 8)
 
-                if self.network_stats_cumulative:
-                    rx = cumulative_rx
-                    tx = cumulative_tx
-                    cx = cumulative_cx
-                else:
-                    rx = rx_per_sec
-                    tx = tx_per_sec
-                    cx = cx_per_sec
+                    # Byte/s or bit/s
+                    if self.net_byteps_tag:
+                        rx_per_sec = self.__autoUnit(network[i]['rx'] // elapsed_time)
+                        tx_per_sec = self.__autoUnit(network[i]['tx'] // elapsed_time)
+                        # Combined, or total network traffic
+                        # cx is combined rx + tx
+                        cx_per_sec = self.__autoUnit(network[i]['cx'] // elapsed_time)
+                        cumulative_rx = self.__autoUnit(network[i]['cumulative_rx'])
+                        cumulative_tx = self.__autoUnit(network[i]['cumulative_tx'])
+                        cumulative_cx = self.__autoUnit(network[i]['cumulative_cx'])
 
-                if not self.network_stats_combined:
-                    # rx/s
-                    self.term_window.addnstr(self.network_y + 1 + i,
-                                             self.network_x + 8,
-                                             format(rx, '>7'), 7)
-                    # tx/s
-                    self.term_window.addnstr(self.network_y + 1 + i,
-                                             self.network_x + 16,
-                                             format(tx, '>7'), 7)
-                else:
-                    # cx/s (Combined, or total)
-                    self.term_window.addnstr(self.network_y + 1 + i,
-                                             self.network_x + 16,
-                                             format(cx, '>7'), 7)
-                ret = ret + 1
-            return ret
+                    else:
+                        rx_per_sec = self.__autoUnit(
+                            network[i]['rx'] // elapsed_time * 8) + "b"
+                        tx_per_sec = self.__autoUnit(
+                            network[i]['tx'] // elapsed_time * 8) + "b"
+                        # cx is combined rx + tx
+                        cx_per_sec = self.__autoUnit(
+                            network[i]['cx'] // elapsed_time * 8) + "b"
+                        cumulative_rx = self.__autoUnit(
+                            network[i]['cumulative_rx'] * 8) + "b"
+                        cumulative_tx = self.__autoUnit(
+                            network[i]['cumulative_tx'] * 8) + "b"
+                        cumulative_cx = self.__autoUnit(
+                            network[i]['cumulative_cx'] * 8) + "b"
+
+                    if self.network_stats_cumulative:
+                        rx = cumulative_rx
+                        tx = cumulative_tx
+                        cx = cumulative_cx
+                    else:
+                        rx = rx_per_sec
+                        tx = tx_per_sec
+                        cx = cx_per_sec
+
+                    if not self.network_stats_combined:
+                        # rx/s
+                        self.term_window.addnstr(self.network_y + net_count,
+                                                 self.network_x + 8,
+                                                 format(rx, '>7'), 7)
+                        # tx/s
+                        self.term_window.addnstr(self.network_y + net_count,
+                                                 self.network_x + 16,
+                                                 format(tx, '>7'), 7)
+                    else:
+                        # cx/s (Combined, or total)
+                        self.term_window.addnstr(self.network_y + net_count,
+                                                 self.network_x + 16,
+                                                 format(cx, '>7'), 7)
+            return net_count +2
         return 0
 
     def displaySensors(self, sensors, offset_y=0):
@@ -3068,28 +3232,28 @@ class glancesScreen:
                 return 3
 
             # Adapt the maximum disk to the screen
-            disk = 0
-            disk_num = min(screen_y - self.diskio_y - 3, len(diskio))
-            for disk in range(0, disk_num):
+            disk_cpt = 0
+            disk_max = min(screen_y - self.diskio_y - 3, len(diskio))
+            for disk in range(0, disk_max):
                 elapsed_time = max(1, self.__refresh_time)
 
-                # partition name
-                self.term_window.addnstr(
-                    self.diskio_y + 1 + disk, self.diskio_x,
-                    diskio[disk]['disk_name'], 8)
-
-                # in/s
-                ins = diskio[disk]['write_bytes'] // elapsed_time
-                self.term_window.addnstr(
-                    self.diskio_y + 1 + disk, self.diskio_x + 10,
-                    format(self.__autoUnit(ins), '>5'), 5)
-
-                # out/s
-                outs = diskio[disk]['read_bytes'] // elapsed_time
-                self.term_window.addnstr(
-                    self.diskio_y + 1 + disk, self.diskio_x + 18,
-                    format(self.__autoUnit(outs), '>5'), 5)
-            return disk + 3
+                if (diskio[disk]['disk_name'] not in limits.getHide('IODISK_HIDE')):
+                    disk_cpt += 1
+                    # partition name
+                    self.term_window.addnstr(
+                        self.diskio_y + disk_cpt, self.diskio_x,
+                        diskio[disk]['disk_name'], 8)
+                    # in/s
+                    ins = diskio[disk]['write_bytes'] // elapsed_time
+                    self.term_window.addnstr(
+                        self.diskio_y + disk_cpt, self.diskio_x + 10,
+                        format(self.__autoUnit(ins), '>5'), 5)
+                    # out/s
+                    outs = diskio[disk]['read_bytes'] // elapsed_time
+                    self.term_window.addnstr(
+                        self.diskio_y + disk_cpt, self.diskio_x + 18,
+                        format(self.__autoUnit(outs), '>5'), 5)
+            return disk_cpt + 2
         return 0
 
     def displayFs(self, fs, offset_y=0):
@@ -3257,22 +3421,31 @@ class glancesScreen:
                                      curses.A_UNDERLINE)
             return 0
         if screen_y > self.process_y + 4 and screen_x > process_x + 48:
-            self.term_window.addnstr(self.process_y, process_x, _("Processes"),
-                                     9, self.title_color if self.hascolors else
-                                     curses.A_UNDERLINE)
+            # Compute others processes
             other = (processcount['total'] -
                      stats.getProcessCount()['running'] -
                      stats.getProcessCount()['sleeping'])
+            # Thread is only available in Glances 1.7.4 or higher
+            try:
+                thread = processcount['thread']
+            except KeyError:
+                thread = '?'
+            # Display the summary
+            self.term_window.addnstr(self.process_y, process_x, _("Tasks"),
+                                     5, self.title_color if self.hascolors else
+                                     curses.A_UNDERLINE)
             self.term_window.addnstr(
-                self.process_y, process_x + 10,
-                '{0:>3}, {1:>2} {2}, {3:>3} {4}, {5:>2} {6}'.format(
+                self.process_y, process_x + 7,
+                '{0:>3} ({1:>3} {2}), {3:>2} {4}, {5:>3} {6}, {7:>2} {8}'.format(
                     str(processcount['total']),
+                    str(thread),
+                    _("thr"),
                     str(processcount['running']),
-                    _("running"),
+                    _("run"),
                     str(processcount['sleeping']),
-                    _("sleeping"),
+                    _("slp"),
                     str(other),
-                    _("other")), 42)
+                    _("oth")), 38)
 
         # Sort info
         # self.getProcessSortedBy() -> User sort choice
@@ -3282,8 +3455,8 @@ class glancesScreen:
         else:
             sortmsg = _("sorted by ") + sortedby
         if (screen_y > self.process_y + 4 and
-            screen_x > process_x + 49 + len(sortmsg)):
-            self.term_window.addnstr(self.process_y, 76, sortmsg, len(sortmsg))
+            screen_x > process_x + 48 + len(sortmsg)):
+            self.term_window.addnstr(self.process_y, 73, sortmsg, len(sortmsg))
 
         #*************************
         # Monitored processes list
@@ -3595,9 +3768,14 @@ class glancesScreen:
                     command = process_name
                 else:
                     command = process_cmdline
-                self.term_window.addnstr(monitor_y + 3 + processes,
-                                         process_x + process_name_x,
-                                         command, max_process_name)
+                try:
+                    self.term_window.addnstr(monitor_y + 3 + processes,
+                                             process_x + process_name_x,
+                                             command, max_process_name)
+                except UnicodeEncodeError:
+                    self.term_window.addnstr(monitor_y + 3 + processes,
+                                             process_x + process_name_x,
+                                             process_name, max_process_name)                    
 
     def displayCaption(self, cs_status="None"):
         """
@@ -3659,78 +3837,92 @@ class glancesScreen:
 
             # display the limits table
             limits_table_x = self.help_x
-            limits_table_y = self.help_y + 1
-            self.term_window.addnstr(limits_table_y, limits_table_x + 18,
-                                     format(_("OK"), '^8'), 8,
-                                     self.default_color)
-            self.term_window.addnstr(limits_table_y, limits_table_x + 26,
-                                     format(_("CAREFUL"), '^8'), 8,
-                                     self.ifCAREFUL_color),
-            self.term_window.addnstr(limits_table_y, limits_table_x + 34,
-                                     format(_("WARNING"), '^8'), 8,
-                                     self.ifWARNING_color),
-            self.term_window.addnstr(limits_table_y, limits_table_x + 42,
-                                     format(_("CRITICAL"), '^8'), 8,
-                                     self.ifCRITICAL_color),
-
-            # display the stat labels
-            stat_labels = [_("CPU user %"), _("CPU system %"),
-                           _("CPU iowait %"), _("Load"),
-                           _("RAM memory %"), _("Swap memory %"),
-                           _("Temp °C"), _("HDD Temp °C"),
-                           _("Filesystem %"), _("CPU process %"),
-                           _("MEM process %")]
-
-            width = 8
-            limits_table_x = self.help_x + 2
             limits_table_y = self.help_y + 2
-            for label in stat_labels:
+            self.term_window.addnstr(limits_table_y, limits_table_x + 15,
+                                     format(_("CAREFUL"), '7'), 7,
+                                     self.ifCAREFUL_color),
+            self.term_window.addnstr(limits_table_y, limits_table_x + 22,
+                                     format(_("WARNING"), '7'), 7,
+                                     self.ifWARNING_color),
+            self.term_window.addnstr(limits_table_y, limits_table_x + 29,
+                                     format(_("CRITICAL"), '8'), 8,
+                                     self.ifCRITICAL_color)
+
+            # stats labels and limit values (left column)
+            stats_labels_left = [_("CPU user %"), _("CPU system %"),
+                                 _("CPU iowait %"), _("CPU steal %"),
+                                 _("Load"), _("RAM %")]
+            limits_table_x = self.help_x + 2
+            limits_table_y = self.help_y + 3
+            for label in stats_labels_left:
                 self.term_window.addnstr(limits_table_y, limits_table_x,
-                                         format(label, '<14'), 14)
+                                         format(label, '<13'), 13)
                 limits_table_y += 1
 
-            # display the limit values
-            limit_values = [[0, limits.getCPUCareful(stat='user'),
-                             limits.getCPUWarning(stat='user'),
-                             limits.getCPUCritical(stat='user')],
-                            [0, limits.getCPUCareful(stat='system'),
-                             limits.getCPUWarning(stat='system'),
-                             limits.getCPUCritical(stat='system')],
-                            [0, limits.getCPUCareful(stat='iowait'),
-                             limits.getCPUWarning(stat='iowait'),
-                             limits.getCPUCritical(stat='iowait')],
-                            [0, limits.getLOADCareful() * core,
-                             limits.getLOADWarning() * core,
-                             limits.getLOADCritical() * core],
-                            [0, limits.getMEMCareful(),
-                             limits.getMEMWarning(),
-                             limits.getMEMCritical()],
-                            [0, limits.getSWAPCareful(),
-                             limits.getSWAPWarning(),
-                             limits.getSWAPCritical()],
-                            [0, limits.getTEMPCareful(),
-                             limits.getTEMPWarning(),
-                             limits.getTEMPCritical()],
-                            [0, limits.getHDDTEMPCareful(),
-                             limits.getHDDTEMPWarning(),
-                             limits.getHDDTEMPCritical()],
-                            [0, limits.getFSCareful(),
-                             limits.getFSWarning(),
-                             limits.getFSCritical()],
-                            [0, limits.getProcessCareful(stat='CPU', core=core),
-                             limits.getProcessWarning(stat='CPU', core=core),
-                             limits.getProcessCritical(stat='CPU', core=core)],
-                            [0, limits.getProcessCareful(stat='MEM'),
-                             limits.getProcessWarning(stat='MEM'),
-                             limits.getProcessCritical(stat='MEM')]]
-
-            limits_table_x = self.help_x + 15
-            limits_table_y = self.help_y + 2
-            for value in limit_values:
+            limit_values_left = [[limits.getCPUCareful(stat='user'),
+                                  limits.getCPUWarning(stat='user'),
+                                  limits.getCPUCritical(stat='user')],
+                                 [limits.getCPUCareful(stat='system'),
+                                  limits.getCPUWarning(stat='system'),
+                                  limits.getCPUCritical(stat='system')],
+                                 [limits.getCPUCareful(stat='iowait'),
+                                  limits.getCPUWarning(stat='iowait'),
+                                  limits.getCPUCritical(stat='iowait')],
+                                 [limits.getCPUCareful(stat='steal'),
+                                  limits.getCPUWarning(stat='steal'),
+                                  limits.getCPUCritical(stat='steal')],
+                                 [limits.getLOADCareful() * core,
+                                  limits.getLOADWarning() * core,
+                                  limits.getLOADCritical() * core],
+                                 [limits.getMEMCareful(),
+                                  limits.getMEMWarning(),
+                                  limits.getMEMCritical()]]
+            width = 6
+            limits_table_x = self.help_x + 16
+            limits_table_y = self.help_y + 3
+            for value in limit_values_left:
                 self.term_window.addnstr(
                     limits_table_y, limits_table_x,
-                    '{0:>{width}}{1:>{width}}{2:>{width}}{3:>{width}}'.format(
-                        *value, width=width), 32)
+                    '{0:>{width}}{1:>{width}}{2:>{width}}'.format(
+                        *value, width=width), 18)
+                limits_table_y += 1
+
+            # stats labels and limit values (right column)
+            stats_labels_right = [_("Swap %"), _("Temp °C"),
+                                  _("HDD Temp °C"), _("Filesystem %"),
+                                  _("CPU process %"), _("MEM process %")]
+            limits_table_x = self.help_x + 38
+            limits_table_y = self.help_y + 3
+            for label in stats_labels_right:
+                self.term_window.addnstr(limits_table_y, limits_table_x,
+                                         format(label, '<13'), 13)
+                limits_table_y += 1
+
+            limit_values_right = [[limits.getSWAPCareful(),
+                                   limits.getSWAPWarning(),
+                                   limits.getSWAPCritical()],
+                                  [limits.getTEMPCareful(),
+                                   limits.getTEMPWarning(),
+                                   limits.getTEMPCritical()],
+                                  [limits.getHDDTEMPCareful(),
+                                   limits.getHDDTEMPWarning(),
+                                   limits.getHDDTEMPCritical()],
+                                  [limits.getFSCareful(),
+                                   limits.getFSWarning(),
+                                   limits.getFSCritical()],
+                                  [limits.getProcessCareful(stat='CPU', core=core),
+                                   limits.getProcessWarning(stat='CPU', core=core),
+                                   limits.getProcessCritical(stat='CPU', core=core)],
+                                  [limits.getProcessCareful(stat='MEM'),
+                                   limits.getProcessWarning(stat='MEM'),
+                                   limits.getProcessCritical(stat='MEM')]]
+            limits_table_x = self.help_x + 53
+            limits_table_y = self.help_y + 3
+            for value in limit_values_right:
+                self.term_window.addnstr(
+                    limits_table_y, limits_table_x,
+                    '{0:>{width}}{1:>{width}}{2:>{width}}'.format(
+                        *value, width=width), 18)
                 limits_table_y += 1
 
             # key table (left column)
@@ -3754,17 +3946,16 @@ class glancesScreen:
                     '{0:{width}}{1}'.format(*key, width=width), 38)
                 key_table_y += 1
 
-                # key table (right column)
-                key_col_right = [[_("l"), _("Show/hide logs")],
-                                 [_("b"), _("Bytes or bits for network I/O")],
-                                 [_("w"), _("Delete warning logs")],
-                                 [_("x"), _("Delete warning and critical logs")],
-                                 [_("1"), _("Global CPU or per-CPU stats")],
-                                 [_("h"), _("Show/hide this help screen")],
-                                 [_("t"), _("View network I/O as combination")],
-                                 [_("u"), _("View cumulative network I/O")],
-                                 [_("q"), _("Quit (Esc and Ctrl-C also work)")]]
-
+            # key table (right column)
+            key_col_right = [[_("l"), _("Show/hide logs")],
+                             [_("b"), _("Bytes or bits for network I/O")],
+                             [_("w"), _("Delete warning logs")],
+                             [_("x"), _("Delete warning and critical logs")],
+                             [_("1"), _("Global CPU or per-CPU stats")],
+                             [_("h"), _("Show/hide this help screen")],
+                             [_("t"), _("View network I/O as combination")],
+                             [_("u"), _("View cumulative network I/O")],
+                             [_("q"), _("Quit (Esc and Ctrl-C also work)")]]
             key_table_x = self.help_x + 38
             key_table_y = limits_table_y + 1
             for key in key_col_right:
@@ -3959,8 +4150,12 @@ class glancesCsv:
         if stats.getCpu():
             # Update CSV with the CPU stats
             cpu = stats.getCpu()
-            self.__csvfile.writerow(["cpu", cpu['user'], cpu['system'],
-                                     cpu['nice']])
+            # Standard CPU stats
+            l = ["cpu", cpu['user'], cpu['system'], cpu['nice']]
+            # Extra CPU stats
+            for s in ('idle', 'iowait', 'irq'):
+                l.append(cpu[s] if cpu.has_key(s) else None)
+            self.__csvfile.writerow(l)
         if stats.getLoad():
             # Update CSV with the LOAD stats
             load = stats.getLoad()
@@ -4168,6 +4363,11 @@ class GlancesInstance():
         self.__update__()
         return json.dumps(stats.getNow().strftime(_("%Y-%m-%d %H:%M:%S")))
 
+    def getUptime(self):
+        # Update and return system uptime
+        self.__update__()
+        return json.dumps(stats.getUptime().strftime(_("%Y-%m-%d %H:%M:%S")))
+
     def __getTimeSinceLastUpdate(self, IOType):
         assert(IOType in ['net', 'disk', 'process_disk'])
         return getTimeSinceLastUpdate(IOType)
@@ -4331,7 +4531,7 @@ def signal_handler(signal, frame):
     end()
 
 
-def getpassword(description='', confirm=False):
+def get_password(description='', confirm=False):
     """
     Read a password from the command line (with confirmation if confirm = True)
     """
@@ -4350,7 +4550,7 @@ def getpassword(description='', confirm=False):
         return password1
     else:
         sys.stdout.write(_("[Warning] Passwords did not match, please try again...\n"))
-        return getpassword(description=description, confirm=confirm)
+        return get_password(description=description, confirm=confirm)
 
 
 def main():
@@ -4381,6 +4581,8 @@ def main():
     html_tag = False
     csv_tag = False
     client_tag = False
+    password_tag = False
+    password_prompt = False
     if is_Windows and not is_colorConsole:
         # Force server mode for Windows OS without colorconsole
         server_tag = True
@@ -4418,7 +4620,21 @@ def main():
                                     "nobold", "noproc", "percpu"])
     except getopt.GetoptError as err:
         # Print help information and exit:
-        print(str(err))
+        if (err.opt == 'P') and ('requires argument' in err.msg):
+            print(_("Error: -P flag need an argument (password)"))
+        elif (err.opt == 'B') and ('requires argument' in err.msg):
+            print(_("Error: -B flag need an argument (bind IP address)"))
+        elif (err.opt == 'c') and ('requires argument' in err.msg):
+            print(_("Error: -c flag need an argument (server IP address/name)"))
+        elif (err.opt == 'p') and ('requires argument' in err.msg):
+            print(_("Error: -p flag need an argument (port number)"))
+        elif (err.opt == 'o') and ('requires argument' in err.msg):
+            print(_("Error: -o flag need an argument (HTML or CSV)"))
+        elif (err.opt == 't') and ('requires argument' in err.msg):
+            print(_("Error: -t flag need an argument (refresh time)"))
+        else:
+            print(str(err))
+        print
         printSyntax()
         sys.exit(2)
     for opt, arg in opts:
@@ -4427,34 +4643,17 @@ def main():
             sys.exit(0)
         elif opt in ("-s", "--server"):
             server_tag = True
-        elif opt in ("-P", "--password"):
-            try:
-                arg
-            except NameError:
-                print(_("Error: -P flag need an argument (password)"))
-                sys.exit(2)
+        elif opt in ("-P"):
+            password_tag = True
             password = arg
+        elif opt in ("--password", "--password"):
+            password_prompt = True
         elif opt in ("-B", "--bind"):
-            try:
-                arg
-            except NameError:
-                print(_("Error: -B flag need an argument (bind IP address)"))
-                sys.exit(2)
             bind_ip = arg
         elif opt in ("-c", "--client"):
             client_tag = True
-            try:
-                arg
-            except NameError:
-                print(_("Error: -c flag need an argument (server IP address/name)"))
-                sys.exit(2)
             server_ip = arg
         elif opt in ("-p", "--port"):
-            try:
-                port_number = int(arg)
-            except:
-                print("invalid port number argument: %s" % arg)
-                sys.exit(2)
             server_port = arg
         elif opt in ("-o", "--output"):
             if arg.lower() == "html":
@@ -4463,7 +4662,6 @@ def main():
                 csv_tag = True
             else:
                 print(_("Error: Unknown output %s" % arg))
-                printSyntax()
                 sys.exit(2)
         elif opt in ("-e", "--sensors"):
             if is_Linux:
@@ -4474,15 +4672,19 @@ def main():
                     sensors_tag = True
             else:
                 print(_("Error: Sensors module is only available on Linux"))
+                sys.exit(2)
         elif opt in ("-y", "--hddtemp"):
             hddtemp_tag = True
         elif opt in ("-f", "--file"):
             output_file = arg
             output_folder = arg
         elif opt in ("-t", "--time"):
-            if int(arg) >= 1:
+            try:
                 refresh_time = int(arg)
-            else:
+            except:
+                print("Error: Invalid refresh time (%s)" % arg)
+                sys.exit(2)
+            if (refresh_time < 1):
                 print(_("Error: Refresh time should be a positive integer"))
                 sys.exit(2)
         elif opt in ("-d", "--diskio"):
@@ -4507,6 +4709,10 @@ def main():
             sys.exit(0)
 
     # Check options
+    if password_tag and password_prompt:
+        print(_("Error: Cannot use both -P and --password flag"))
+        sys.exit(2)
+
     if server_tag:
         if client_tag:
             print(_("Error: Cannot use both -s and -c flag"))
@@ -4514,8 +4720,8 @@ def main():
         if html_tag or csv_tag:
             print(_("Error: Cannot use both -s and -o flag"))
             sys.exit(2)
-        if password == '':
-            password = getpassword(description=_("Define the password for the Glances server"), confirm=True)
+        if password_prompt:
+            password = get_password(description=_("Define the password for the Glances server"), confirm=True)
 
     if client_tag:
         if html_tag or csv_tag:
@@ -4525,8 +4731,8 @@ def main():
             print(_("Error: Cannot use both -c and -C flag"))
             print(_("       Limits are set based on the server ones"))
             sys.exit(2)
-        if password == '':
-            password = getpassword(description=_("Enter the Glances server password"), confirm=False)
+        if password_prompt:
+            password = get_password(description=_("Enter the Glances server password"), confirm=False)
 
     if html_tag:
         if not html_lib_tag:
@@ -4574,10 +4780,14 @@ def main():
     # Init Glances depending of the mode (standalone, client, server)
     if server_tag:
         # Init the server
+        try:
+            server = GlancesServer(bind_ip, int(server_port), GlancesXMLRPCHandler, cached_time)
+        except (ValueError, socket.error) as err:
+            print(_("Error: Invalid port number: %s") % err)
+            sys.exit(2)
         print(_("Glances server is running on") + " %s:%s" % (bind_ip, server_port))
-        server = GlancesServer(bind_ip, int(server_port), GlancesXMLRPCHandler, cached_time)
 
-        # Set the server login/password (if -P tag)
+        # Set the server login/password (if -P/--password tag)
         if password != "":
             server.add_user(username, password)
 
@@ -4592,7 +4802,11 @@ def main():
         stats.update({})
     elif client_tag:
         # Init the client (displaying server stat in the CLI)
-        client = GlancesClient(server_ip, int(server_port), username, password)
+        try:
+            client = GlancesClient(server_ip, int(server_port), username, password)
+        except (ValueError, socket.error) as err:
+            print(_("Error: Invalid port number: %s") % err)
+            sys.exit(2)
 
         # Test if client and server are in the same major version
         if not client.client_init():
