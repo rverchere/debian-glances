@@ -19,7 +19,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 __appname__ = 'glances'
-__version__ = "1.7.5"
+__version__ = "1.7.6"
 __author__ = "Nicolas Hennion <nicolas@nicolargo.com>"
 __licence__ = "LGPL"
 
@@ -903,7 +903,7 @@ class glancesLogs:
         if item_type.startswith("MEM"):
             # Sort TOP process by memory_percent
             sortby = 'memory_percent'
-        elif item_type.startswith("CPU IO") and is_Linux:
+        elif item_type.startswith("CPU_IO") and is_Linux:
             # Sort TOP process by io_counters (only for Linux OS)
             sortby = 'io_counters'
         elif item_type.startswith("MON"):
@@ -1202,16 +1202,24 @@ class GlancesGrabProcesses:
         procstat['pid'] = proc.pid
 
         # Process name (cached by PSUtil)
-        procstat['name'] = proc.name
+        try:
+            procstat['name'] = proc.name()
+        except TypeError:
+            procstat['name'] = proc.name
+
 
         # Process username (cached with internal cache)
         try:
             self.username_cache[procstat['pid']]
         except:
             try:
+                self.username_cache[procstat['pid']] = proc.username()
+            except TypeError:
                 self.username_cache[procstat['pid']] = proc.username
             except KeyError:
                 try:
+                    self.username_cache[procstat['pid']] = proc.uids().real
+                except AttributeError:
                     self.username_cache[procstat['pid']] = proc.uids.real
                 except KeyError:
                     self.username_cache[procstat['pid']] = "?"
@@ -1221,28 +1229,39 @@ class GlancesGrabProcesses:
         try:
             self.cmdline_cache[procstat['pid']]
         except:
-            self.cmdline_cache[procstat['pid']] = ' '.join(proc.cmdline)
+            try:
+                self.cmdline_cache[procstat['pid']] = ' '.join(proc.cmdline())
+            except TypeError:
+                self.cmdline_cache[procstat['pid']] = ' '.join(proc.cmdline)
         procstat['cmdline'] = self.cmdline_cache[procstat['pid']]
 
         # Process status
-        procstat['status'] = str(proc.status)[:1].upper()
+        try:
+            procstat['status'] = str(proc.status())[:1].upper()
+        except TypeError:
+            procstat['status'] = str(proc.status)[:1].upper()
 
         # Process nice
-        procstat['nice'] = proc.get_nice()
+        procstat['nice'] = getattr(proc, 'get_nice',
+                           getattr(proc, 'nice'))()
 
         # Process memory
-        procstat['memory_info'] = proc.get_memory_info()
-        procstat['memory_percent'] = proc.get_memory_percent()
+        procstat['memory_info'] = getattr(proc, 'get_memory_info',
+                                  getattr(proc, 'memory_info', None))()
+        procstat['memory_percent'] = getattr(proc, 'get_memory_percent',
+                                     getattr(proc, 'memory_percent', None))()
 
         # Process CPU
-        procstat['cpu_times'] = proc.get_cpu_times()
-        procstat['cpu_percent'] = proc.get_cpu_percent(interval=0)
+        procstat['cpu_times'] = getattr(proc, 'get_cpu_times',
+                                getattr(proc, 'cpu_times', None))()
+        procstat['cpu_percent'] = getattr(proc, 'get_cpu_percent',
+                                  getattr(proc, 'cpu_percent', None))(interval=0)
 
         # Process network connections (TCP and UDP) (Experimental)
         # !!! High CPU consumption
         # try:
-        #     procstat['tcp'] = len(proc.get_connections(kind="tcp"))
-        #     procstat['udp'] = len(proc.get_connections(kind="udp"))
+        #     procstat['tcp'] = len(proc.connections(kind="tcp"))
+        #     procstat['udp'] = len(proc.connections(kind="udp"))
         # except:
         #     procstat['tcp'] = 0
         #     procstat['udp'] = 0
@@ -1255,7 +1274,8 @@ class GlancesGrabProcesses:
         if psutil_get_io_counter_tag:
             try:
                 # Get the process IO counters
-                proc_io = proc.get_io_counters()
+                proc_io = getattr(proc, 'get_io_counters',
+                          getattr(proc, 'io_counters', None))()
                 io_new = [proc_io.read_bytes, proc_io.write_bytes]
             except psutil.AccessDenied:
                 # Access denied to process IO (no root account)
@@ -1301,15 +1321,20 @@ class GlancesGrabProcesses:
                     continue
                 # Update processcount (global statistics)
                 try:
-                    self.processcount[str(proc.status)] += 1
+                    status = proc.status()
+                except TypeError:
+                    status = proc.status
+                try:
+                    self.processcount[str(status)] += 1
                 except KeyError:
                     # Key did not exist, create it
-                    self.processcount[str(proc.status)] = 1
+                    self.processcount[str(status)] = 1
                 else:
                     self.processcount['total'] += 1
                 # Update thread number (global statistics)
                 try:
-                    self.processcount['thread'] += proc.get_num_threads()
+                    self.processcount['thread'] += getattr(proc, 'get_num_threads',
+                                                   getattr(proc, 'num_threads'))()
                 except:
                     pass
             except (psutil.NoSuchProcess, psutil.AccessDenied):
@@ -1632,8 +1657,12 @@ class GlancesStats:
                 phymem = psutil.phymem_usage()
 
                 # buffers and cached (Linux, BSD)
-                buffers = getattr(psutil, 'phymem_buffers', 0)()
-                cached = getattr(psutil, 'cached_phymem', 0)()
+                try:
+                    buffers = getattr(psutil, 'phymem_buffers', 0)()
+                    cached = getattr(psutil, 'cached_phymem', 0)()
+                except TypeError:
+                    buffers = 0
+                    cached = 0
 
                 # phymem free and usage
                 total = phymem.total
@@ -1769,10 +1798,11 @@ class GlancesStats:
 
         # Uptime
         try:
-            # For PsUtil >= 0.7.0
-            self.uptime = datetime.now() - datetime.fromtimestamp(psutil.get_boot_time())
-        except:
-            self.uptime = datetime.now() - datetime.fromtimestamp(psutil.BOOT_TIME)
+            boot_time = getattr(psutil, 'get_boot_time',
+                        getattr(psutil, 'boot_time'))()
+        except AttributeError:
+            boot_time = psutil.BOOT_TIME
+        self.uptime = datetime.now() - datetime.fromtimestamp(boot_time)
         # Convert uptime to string (because datetime is not JSONifi)
         self.uptime = str(self.uptime).split('.')[0]
 
@@ -1780,7 +1810,10 @@ class GlancesStats:
         self.now = datetime.now()
 
         # Get the number of core (CPU) (Used to display load alerts)
-        self.core_number = psutil.NUM_CPUS
+        try:
+            self.core_number = psutil.cpu_count()
+        except AttributeError:
+            self.core_number = psutil.NUM_CPUS
 
         # get psutil version
         self.psutil_version = psutil.__version__
@@ -2511,6 +2544,9 @@ class glancesScreen:
         elif self.pressedkey == ord('n') and network_tag:
             # 'n' > Show/hide network stats
             self.network_tag = not self.network_tag
+        elif self.pressedkey == ord('z'):
+            # 'z' > Show/Hide process list
+            self.process_tag = not self.process_tag
         elif self.pressedkey == ord('p'):
             # 'p' > Sort processes by name
             self.setProcessSortedBy('name')
@@ -3775,7 +3811,7 @@ class glancesScreen:
                 except UnicodeEncodeError:
                     self.term_window.addnstr(monitor_y + 3 + processes,
                                              process_x + process_name_x,
-                                             process_name, max_process_name)                    
+                                             process_name, max_process_name)
 
     def displayCaption(self, cs_status="None"):
         """
@@ -3955,6 +3991,7 @@ class glancesScreen:
                              [_("h"), _("Show/hide this help screen")],
                              [_("t"), _("View network I/O as combination")],
                              [_("u"), _("View cumulative network I/O")],
+                             [_("z"), _("Show/hide processes list")],
                              [_("q"), _("Quit (Esc and Ctrl-C also work)")]]
             key_table_x = self.help_x + 38
             key_table_y = limits_table_y + 1
