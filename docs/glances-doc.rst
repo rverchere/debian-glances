@@ -2,11 +2,11 @@
 Glances
 =======
 
-This manual describes *Glances* version 1.7.5.
+This manual describes *Glances* version 1.7.6.
 
 Copyright © 2012-2014 Nicolas Hennion <nicolas@nicolargo.com>
 
-January 2014
+March 2014
 
 .. contents:: Table of Contents
 
@@ -146,6 +146,8 @@ The following commands (key pressed) are supported while in Glances:
     Delete finished warning and critical log messages
 ``y``
     Show/hide hddtemp stats (only available with -y flag)
+``z``
+    Show/hide processes list (for low CPU consumption)
 ``1``
     Switch between global CPU and per-CPU stats
 
