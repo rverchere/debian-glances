@@ -17,9 +17,6 @@ override_dh_auto_test:
 
 override_dh_install:
 	dh_install
-	# Move data out of /usr/lib
-	find debian/glances/usr/lib/ -type d -wholename "*glances/data" -exec rm -rf '{}' +;
-	cp -a glances/data debian/glances/usr/share/glances/
 
 override_dh_installdocs:
 	dh_installdocs

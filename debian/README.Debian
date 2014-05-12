@@ -5,7 +5,7 @@ access to them. For instance:
 
 	mkdir /tmp/glances
 	cd /tmp/glances
-	for dir in css img html; do ln -sf /usr/share/glances/data/$dir;done
+	for dir in css img html; do ln -sf /usr/lib/python3/dist-packages/glances/data/$dir;done
 	glances -o html -f /tmp/glances
 
- -- Geoffroy Youri Berret <efrim@azylum.org>  Sun, 27 Jan 2013 18:10:13 +0100
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Mon, 12 May 2014 18:03:39 +0200
