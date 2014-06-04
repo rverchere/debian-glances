@@ -1,4 +1,12 @@
-glances (1.7.4-1) UNRELEASED; urgency=medium
+glances (1.7.6-1) unstable; urgency=medium
+
+  * Depends on python-psutil >= 1.2.1
+  * Add missing dependency python3-pkg-resources (Closes: #742291)
+  * Imported Upstream version 1.7.6
+
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Wed, 26 Mar 2014 18:10:26 +0100
+
+glances (1.7.4-1) unstable; urgency=medium
 
   * python3 conversion
   * Fixed executable issue (LP: #1275579)
