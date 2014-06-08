@@ -15,8 +15,9 @@ override_dh_clean:
 # http://bugs.debian.org/733168
 override_dh_auto_test:
 
-override_dh_install:
-	dh_install
+override_dh_installdeb:
+	dh_installdeb
+	chmod -x debian/glances/usr/lib/python3/dist-packages/glances/outputs/static/js/*.js
 
 override_dh_installdocs:
 	dh_installdocs
