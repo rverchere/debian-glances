@@ -1,9 +1,9 @@
-.TH glances 1  "March, 2014" "version 1.7.6" "USER COMMANDS"
+.TH glances 1  "January, 2014" "version 1.7.4" "USER COMMANDS"
 .SH NAME
 glances \- A cross-platform curses-based monitoring tool
 .SH SYNOPSIS
 .B glances
-[\-bdehmnrsvyz1] [\-B bind] [\-c server] [\-C conffile] [\-p port] [\-P password] [\-\-password] [\-t refresh] [\-f file] [\-o output]
+[\-bdehmnrsvyz1] [\-B bind] [\-c server] [\-C conffile] [\-p port] [\-P password] [--password] [\-t refresh] [\-f file] [\-o output]
 .SH DESCRIPTION
 Glances is a free (LGPL) cross-platform curses-based monitoring tool which aims to present a maximum of information
 in a minimum of space, ideally to fit in a classical 80x24 terminal or higher to have additionnal information.
@@ -134,9 +134,6 @@ Delete finished warning and critical log messages
 .TP
 .B y
 Show/hide hddtemp stats (only available with \-y flag)
-.TP
-.B z
-Show/hide processes list (for low CPU consumption)
 .TP
 .B 1
 Switch between global CPU and per-CPU stats
