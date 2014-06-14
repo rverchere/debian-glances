@@ -28,17 +28,29 @@ It uses the `psutil`_ library to get information from your system.
 Requirements
 ============
 
+<<<<<<< HEAD
+- ``python >= 2.6`` (tested with version 2.6, 2.7, 3.2, 3.3, 3.4)
+- ``psutil >= 0.5.1`` (recommended version >= 2.0.0)
+=======
 - ``python >= 2.6`` (tested with version 2.6, 2.7, 3.3, 3.4)
 - ``psutil >= 2.0.0``
+>>>>>>> release/v2.0
 - ``setuptools``
 
 Optional dependencies:
 
+<<<<<<< HEAD
+- ``jinja2`` (for HTML output)
+- ``pysensors`` (for HW monitoring support) [Linux-only]
+- ``hddtemp`` (for HDD temperature monitoring support)
+- ``batinfo`` (for battery monitoring support) [Linux-only]
+=======
 - ``bottle`` (for Web server mode)
 - ``py3sensors`` (for hardware monitoring support) [Linux-only]
 - ``hddtemp`` (for HDD temperature monitoring support) [Linux-only]
 - ``batinfo`` (for battery monitoring support) [Linux-only]
 - ``pysnmp`` (for SNMP support)
+>>>>>>> release/v2.0
 
 Installation
 ============
@@ -55,8 +67,13 @@ To install, simply use `pip`_:
 
     pip install Glances
 
+<<<<<<< HEAD
+*Note*: Python headers are required to install psutil.
+For example, on Debian/Ubuntu you need to install first the *python-dev* package.
+=======
 *Note*: Python headers are required to install psutil. For example,
 on Debian/Ubuntu you need to install first the *python-dev* package.
+>>>>>>> release/v2.0
 
 To upgrade Glances to the latest version:
 
@@ -67,7 +84,11 @@ To upgrade Glances to the latest version:
 GNU/Linux
 ---------
 
+<<<<<<< HEAD
+At the moment, packages exist for the following distributions:
+=======
 At the moment, packages exist for the following GNU/Linux distributions:
+>>>>>>> release/v2.0
 
 - Arch Linux
 - Debian (Testing/Sid)
@@ -124,10 +145,21 @@ MacPorts
 Windows
 -------
 
+<<<<<<< HEAD
+Glances proposes a Windows client based on the `colorconsole`_ Python library.
+Glances version < 1.7.2 only works in server mode.
+
+Thanks to Nicolas Bourges, a Windows installer is available:
+
+- Glances-1.7.2-win32.msi_ (32-bit, MD5: dba4f6cc9f47b6806ffaeb665c093270)
+
+Otherwise, you have to follow these steps:
+=======
 Glances proposes a Windows client based on the `colorconsole`_ Python
 library.
 
 To install Glances on Windows, you have to follow these steps:
+>>>>>>> release/v2.0
 
 - Install Python for Windows: http://www.python.org/getit/
 - Install the psutil library: https://pypi.python.org/pypi?:action=display&name=psutil#downloads
@@ -146,8 +178,13 @@ To install Glances version X.Y from source:
     $ cd glances-*
     # python setup.py install
 
+<<<<<<< HEAD
+*Note*: Python headers are required to install psutil.
+For example, on Debian/Ubuntu you need to install first the *python-dev* package.
+=======
 *Note*: Python headers are required to install psutil. For example,
 on Debian/Ubuntu you need to install first the *python-dev* package.
+>>>>>>> release/v2.0
 
 Puppet
 ------

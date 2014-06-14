@@ -462,9 +462,9 @@ The number of processes in the list is adapted to the screen size.
 ``MEM%``
     % of MEM used by the process
 ``VIRT``
-    Total program size (VMS)
+    Total program size aka Virtual Memory Size (VMS)
 ``RES``
-    Resident set size (RSS)
+    Resident Set Size (RSS)
 ``PID``
     Process ID
 ``USER``
@@ -597,8 +597,38 @@ API Documentation
 
 Glances uses a `XML-RPC server`_ and can be used by another client software.
 
+<<<<<<< HEAD
+API documentation is available at https://github.com/nicolargo/glances/wiki/The-Glances-API-How-To
+
+Other outputs
+=============
+
+Thanks to the -o (output) option, it is possible to export statistics to `CSV` or `HTML` files.
+
+.. code-block:: console
+
+    $ glances -o CSV -f /tmp
+
+The CSV output file is named ``glances.csv``.
+
+CSV files have on line per stats:
+
+- load,load1,load5,load15
+- mem,total,used,free
+- swap,total,used,free
+- cpu,user,system,nice,idle,iowait,irq
+
+.. code-block:: console
+
+    $ glances -o HTML -f /tmp
+
+The HTML output file is named ``glances.html``.
+
+*Note*: The css and img folders (glances/data) should be in the /tmp folder.
+=======
 API documentation is available at
 https://github.com/nicolargo/glances/wiki/The-Glances-2.x-API-How-to.
+>>>>>>> release/v2.0
 
 Support
 =======
