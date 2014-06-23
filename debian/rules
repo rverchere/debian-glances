@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_clean:
+	rm -rf ./Glances.egg-info
+	dh_clean
+
+# Overriding test to prevent FTBS (cf. #733168)
+# http://bugs.debian.org/733168
+override_dh_auto_test:
+
+override_dh_installdeb:
+	dh_installdeb
+	chmod -x debian/glances/usr/lib/python3/dist-packages/glances/outputs/static/js/*.js
+
+override_dh_installdocs:
+	dh_installdocs
+	rm -f  debian/glances/usr/share/doc/glances/COPYING
+	rm -f  debian/glances/usr/share/doc/glances/AUTHORS
+	rm -f  debian/glances/usr/share/doc/glances/NEWS
+	rm -rf debian/glances/usr/share/doc/glances/glances.conf
+
+override_dh_installchangelogs:
+	dh_installchangelogs NEWS

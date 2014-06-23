@@ -1,0 +1,26 @@
+Source: glances
+Section: utils
+Priority: extra
+Maintainer: Geoffroy Youri Berret <efrim@azylum.org>
+Build-Depends: debhelper (>= 9), python3, python3-setuptools (>= 0.6), dh-python,
+Standards-Version: 3.9.5
+X-Python3-Version: >= 3.3
+Vcs-Git: git://git.kaliko.me/glances.git
+Vcs-browser: http://git.kaliko.me/?p=glances.git
+Homepage: http://nicolargo.github.com/glances/
+
+Package: glances
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends},
+    python3-psutil (>=2.0.0),
+    python3-pkg-resources,
+    adduser,
+    lsb-base
+Recommends: python3-jinja2 (>=2.0),
+    python3-pysnmp4,
+    python3-bottle,
+Description: CLI curses based monitoring tool
+ Glances is a CLI curses based monitoring tool for GNU/Linux or BSD OS.
+ Glances uses the PsUtil library to get information from your system.
+ .
+ It monitors CPU, load, memory, network bandwidth, disk I/O, disk use, process.

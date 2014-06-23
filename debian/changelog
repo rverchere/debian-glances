@@ -1,0 +1,69 @@
+glances (1.7.6-1) unstable; urgency=medium
+
+  * Depends on python-psutil >= 1.2.1
+  * Add missing dependency python3-pkg-resources (Closes: #742291)
+  * Imported Upstream version 1.7.6
+
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Wed, 26 Mar 2014 18:10:26 +0100
+
+glances (1.7.4-1) unstable; urgency=medium
+
+  * python3 conversion
+  * Fixed executable issue (LP: #1275579)
+  * Imported Upstream version 1.7.4
+  * Handle html doc with doc-base
+  * Update copyright
+
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Wed, 05 Feb 2014 20:05:51 +0100
+
+glances (1.7.3-2) unstable; urgency=medium
+
+  * Overriding test (closes: #733168)
+
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Sat, 28 Dec 2013 20:16:02 +0100
+
+glances (1.7.3-1) unstable; urgency=low
+
+  * Add init scrip to start Glances server
+  * Imported Upstream version 1.7.3 (closes: #729393)
+  * Depends on python-psutil >= 1.1.0
+  * Build depends on python-psutil
+  * Fixed files location with latest release
+  * dh-python conversion
+  * Bumped Standards-Version to 3.9.5.0 (no changes)
+
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Fri, 01 Nov 2013 16:01:03 +0100
+
+glances (1.6-1) unstable; urgency=low
+
+  * Imported Upstream version 1.6
+  * Removed useless install files
+  * Dropped patches included upstream
+  * New conf file in /etc/glances/glances.conf
+
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Sun, 27 Jan 2013 18:43:42 +0100
+
+glances (1.5.1-1) unstable; urgency=low
+
+  * Fixed watch file
+  * Imported Upstream version 1.5.1
+  * Drop override_dh_install, filename fixed upstream
+  * Cherry-picked patch to fix HMTL,CVS output
+  * Fixed default HTML template location
+    Use shell wrapper instead of symbolic link.
+
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Sun, 11 Nov 2012 12:05:38 +0100
+
+glances (1.4.2.1-1) unstable; urgency=low
+
+  * Imported Upstream version 1.4.2.1
+  * Removed man page patch (fixed upstream)
+  * Bumped Standards-Version to 3.9.4.0
+
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Sun, 23 Sep 2012 11:45:01 +0200
+
+glances (1.4.1.1-1) unstable; urgency=low
+
+  * Initial package (closes: #654888).
+
+ -- Geoffroy Youri Berret <efrim@azylum.org>  Mon, 17 Sep 2012 17:27:25 +0200

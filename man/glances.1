@@ -1,0 +1,185 @@
+<<<<<<< HEAD
+.TH glances 1  "May, 2014" "version 1.7.7" "USER COMMANDS"
+=======
+.TH glances 1  "June, 2014" "version 2.0" "USER COMMANDS"
+>>>>>>> release/v2.0
+.SH NAME
+glances \- A cross-platform curses-based system monitoring tool
+.SH SYNOPSIS
+.B glances
+<<<<<<< HEAD
+[\-bdehmnrsvyz1] [\-B bind] [\-c server] [\-C conffile] [\-p port] [\-P password] [\-\-password] [\-t refresh] [\-f file] [\-o output]
+=======
+.RI [ OPTIONS ]
+>>>>>>> release/v2.0
+.SH DESCRIPTION
+Glances is a free (LGPL) cross-platform curses-based system monitoring tool which
+aims to present a maximum of information in a minimum of space, ideally to fit in
+a classical 80x24 terminal or higher to have additionnal information. It can adapt
+dynamically the displayed information depending on the terminal size.
+.PP
+Glances can also work in client/server mode. Remote monitoring could be done via
+terminal or web interface.
+.PP
+This tool is written in Python and uses the psutil library to fetch the statistical
+values from key elements, like CPU, load average, memory, network, disks, file
+systems, processes and so on.
+.SH COMMAND-LINE OPTIONS
+The command-line options are the following:
+.TP
+.B \-h, \-\-help
+display the help and exit
+.TP
+.B \-V, \-\-version
+show program's version number and exit
+.TP
+.B \-b, \-\-byte
+display network rate in byte per second [default: bit per second]
+.TP
+.B \-B BIND_ADDRESS, \-\-bind BIND_ADDRESS
+bind server to the given IPv4/IPv6 address or hostname
+.TP
+.B \-c CLIENT, \-\-client CLIENT
+connect to a Glances server by IPv4/IPv6 address or hostname
+.TP
+.B \-C CONF_FILE, \-\-config CONF_FILE
+path to the configuration file
+.TP
+<<<<<<< HEAD
+.B \-f FOLDER
+Set the HTML or CSV output folder
+=======
+.B \-\-disable-bold
+disable bold mode in the terminal
+>>>>>>> release/v2.0
+.TP
+.B \-\-disable-diskio
+disable disk I/O module
+.TP
+.B \-\-disable-fs
+disable file system module
+.TP
+.B \-\-disable-network
+disable network module
+.TP
+.B \-\-disable-network
+disable network module
+.TP
+.B \-\-disable-sensors
+disable sensors module
+.TP
+.B \-\-disable-process
+disable process module
+.TP
+.B \-\-disable-log
+disable log module
+.TP
+.B \-\-output-csv OUTPUT_CSV
+export stats to a CSV file
+.TP
+.B \-p PORT, \-\-port PORT
+define the client/server TCP port [default: 61209]
+.TP
+.B \-\-password
+define a client/server password from the prompt or file
+.TP
+.B \-s, \-\-server
+run Glances in server mode
+.TP
+.B \-\-snmp-community SNMP_COMMUNITY
+SNMP community
+.TP
+.B \-\-snmp-port SNMP_PORT
+SNMP port
+.TP
+.B \-\-snmp-version SNMP_VERSION
+SNMP version (1, 2c or 3)
+.TP
+.B \-\-snmp-user SNMP_USER
+SNMP username (only for SNMPv3)
+.TP
+.B \-\-snmp-auth SNMP_AUTH
+SNMP authentication key (only for SNMPv3)
+.TP
+.B \-t TIME, \-\-time TIME
+set refresh time in seconds [default: 3 sec]
+.TP
+.B \-w, \-\-webserver
+run Glances in Web server mode
+.TP
+.B \-1, \-\-percpu
+start Glances in per CPU mode
+.SH INTERACTIVE COMMANDS
+You can use the following keys while in Glances:
+.TP
+.B a
+Sort process list automatically
+.TP
+.B b
+Switch between bit/s or Byte/s for network I/O
+.TP
+.B c
+Sort processes by CPU usage
+.TP
+.B d
+Show/hide disk I/O stats
+.TP
+.B f
+Show/hide file system stats
+.TP
+.B h
+Show/hide the help screen
+.TP
+.B i
+Sort processes by I/O rate
+.TP
+.B l
+Show/hide log messages
+.TP
+.B m
+Sort processes by MEM usage
+.TP
+.B n
+Show/hide network stats
+.TP
+.B p
+Sort processes by name
+.TP
+.B q
+Quit
+.TP
+.B s
+Show/hide sensors stats
+.TP
+.B t
+View network I/O as combination
+.TP
+.B u
+View cumulative network I/O
+.TP
+.B w
+Delete finished warning log messages
+.TP
+.B x
+Delete finished warning and critical log messages
+.TP
+.B z
+Show/hide processes stats
+.TP
+.B z
+Show/hide processes list (for low CPU consumption)
+.TP
+.B 1
+Switch between global CPU and per-CPU stats
+.SH EXAMPLES
+.TP
+Refresh information every 5 seconds:
+.B glances
+\-t 5
+.PP
+.SH EXIT STATUS
+Glances returns a zero exit status if it succeeds to print/grab information.
+.PP
+It returns 2 if it fails to parse its options (missing arguments, invalid value, etc).
+.SH AUTHOR
+Glances is written by Nicolas Hennion aka Nicolargo (contact@nicolargo.com)
