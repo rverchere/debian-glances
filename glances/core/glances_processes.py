@@ -69,7 +69,10 @@ class GlancesProcesses(object):
         procstat['pid'] = proc.pid
 
         # Process name (cached by PSUtil)
-        procstat['name'] = proc.name()
+        try:
+            procstat['name'] = proc.name()
+        except psutil.AccessDenied:
+            procstat['name'] = ""
 
         # Process username (cached with internal cache)
         try:
@@ -77,10 +80,10 @@ class GlancesProcesses(object):
         except:
             try:
                 self.username_cache[procstat['pid']] = proc.username()
-            except KeyError:
+            except (KeyError, psutil.AccessDenied):
                 try:
                     self.username_cache[procstat['pid']] = proc.uids().real
-                except KeyError:
+                except (KeyError, AttributeError, psutil.AccessDenied):
                     self.username_cache[procstat['pid']] = "?"
         procstat['username'] = self.username_cache[procstat['pid']]
 
@@ -95,7 +98,10 @@ class GlancesProcesses(object):
         procstat['status'] = str(proc.status())[:1].upper()
 
         # Process nice
-        procstat['nice'] = proc.nice()
+        try:
+            procstat['nice'] = proc.nice()
+        except psutil.AccessDenied:
+            procstat['nice'] = None
 
         # Process memory
         procstat['memory_info'] = proc.memory_info()

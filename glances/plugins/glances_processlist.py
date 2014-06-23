@@ -24,7 +24,7 @@ import os
 from datetime import timedelta
 
 # Import Glances libs
-from glances.core.glances_globals import glances_processes
+from glances.core.glances_globals import glances_processes, is_windows
 from glances.plugins.glances_plugin import GlancesPlugin
 
 
@@ -141,12 +141,16 @@ class Plugin(GlancesPlugin):
             msg = '{0:>6}'.format(p['pid'])
             ret.append(self.curse_add_line(msg))
             # USER
-            msg = ' {0:9}'.format(p['username'][:9])
+            # docker internal users are displayed as ints only, therefore str()
+            msg = ' {0:9}'.format(str(p['username'])[:9])
             ret.append(self.curse_add_line(msg))
             # NICE
             nice = p['nice']
+            if nice is None:
+                nice = '?'
             msg = '{0:>5}'.format(nice)
-            if nice != 0:
+            if isinstance(nice, int) and ((is_windows and nice != 32) or
+                                          (not is_windows and nice != 0)):
                 ret.append(self.curse_add_line(msg, decoration='NICE'))
             else:
                 ret.append(self.curse_add_line(msg))
