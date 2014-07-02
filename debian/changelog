@@ -7,17 +7,6 @@ glances (2.0.1-1) unstable; urgency=medium
 
  -- Rémi Verchère <rverchere@gmail.com>  Wed, 02 Jul 2014 22:06:10 +0200
 
-glances (2.0.0-1) unstable; urgency=medium
-
-  HTML output was removed in glances 2.0 in favour of a dedicated web server.
-  To run the web server you'll need to install python-bottle (listed in recommends).
-  Run the web server calling glances with "-w" cli option, glances will listen on
-  available ipv4 address (default port 61208):
-  .
-  	http://0.0.0.0:61208/
-
- -- Geoffroy Youri Berret <efrim@azylum.org>  Mon, 09 Jun 2014 13:46:52 +0200
-
 glances (1.7.6-1) unstable; urgency=medium
 
   * Depends on python-psutil >= 1.2.1
