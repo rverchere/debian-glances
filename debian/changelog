@@ -1,12 +1,11 @@
 glances (2.0.1-1) unstable; urgency=medium
 
   * New upstream release
-  * Complete code refactoring from 1.x
-  * Based on plugins system
-  * New web interface
-  * Change maintainer
+  * Add recommend on pysnmp, hddtemp, lm-sensors, bottle
+  * Depends on python-psutil >= 2.0.0
+  * Fixed lintian error regarding javascript sources
 
- -- Rémi Verchère <rverchere@gmail.com>  Mon, 30 Jun 2014 22:07:44 +0200
+ -- Rémi Verchère <rverchere@gmail.com>  Wed, 02 Jul 2014 22:06:10 +0200
 
 glances (2.0.0-1) unstable; urgency=medium
 
