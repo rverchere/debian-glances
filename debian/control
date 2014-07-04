@@ -12,7 +12,6 @@ Homepage: http://nicolargo.github.com/glances/
 Package: glances
 Architecture: all
 Depends: ${misc:Depends}, ${python3:Depends},
-    python3-psutil (>=2.0.0),
     python3-pkg-resources,
     adduser,
     lsb-base

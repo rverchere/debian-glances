@@ -1,1 +1,1 @@
-psutil python3-psutil
+psutil python3-psutil (>= 2.0.0)
