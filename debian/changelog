@@ -4,6 +4,7 @@ glances (2.0.1-1) unstable; urgency=medium
   * Add recommend on pysnmp, hddtemp, lm-sensors, bottle
   * Depends on python-psutil >= 2.0.0
   * Fixed lintian error regarding javascript sources
+  * Adopt package. (Closes: #752175)
 
  -- Rémi Verchère <rverchere@gmail.com>  Wed, 02 Jul 2014 22:06:10 +0200
 
