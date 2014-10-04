@@ -1,3 +1,10 @@
+glances (2.1-1) unstable; urgency=medium
+
+  * New upstream release 2.1
+  * Fixed lintian error regarding javascript sources
+
+ -- Rémi Verchère <rverchere@gmail.com>  Sun, 28 Sep 2014 14:37:25 +0200
+
 glances (2.0.1-1) unstable; urgency=medium
 
   * New upstream release

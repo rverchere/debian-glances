@@ -6,7 +6,7 @@ Files: *
 Copyright: 2012-2014 Nicolas Hennion (aka) Nicolargo <nicolas@nicolargo.com>
 License: LGPL-3.0+
 
-Files: "*/modernizr.custom.js"
+Files: ./glances/outputs/static/js/modernizr.custom.js
 Copyright: 2009-2014 Modernizr
 License: MIT
 
