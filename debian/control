@@ -15,13 +15,17 @@ Depends: ${misc:Depends}, ${python3:Depends},
     python3-pkg-resources,
     adduser,
     lsb-base
-Recommends: python3-jinja2 (>=2.0),
-    python3-pysnmp4,
+Recommends: python3-pysnmp4,
     python3-bottle,
+    python3-docker,
+    python3-matplotlib,
+    python3-netifaces,
+    python3-influxdb,
+    python3-pystache,
     hddtemp,
     lm-sensors
-Description: CLI curses based monitoring tool
- Glances is a CLI curses based monitoring tool for GNU/Linux or BSD OS.
+Description: Curses-based monitoring tool
+ Glances is a curses-based monitoring tool for GNU/Linux or BSD OS.
  Glances uses the PsUtil library to get information from your system.
  .
  It monitors CPU, load, memory, network bandwidth, disk I/O, disk use, process.
