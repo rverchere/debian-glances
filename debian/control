@@ -13,8 +13,9 @@ Package: glances
 Architecture: all
 Depends: ${misc:Depends}, ${python3:Depends},
     python3-pkg-resources,
+    python3-psutil,
     adduser,
-    lsb-base
+    lsb-base,
 Recommends: python3-pysnmp4,
     python3-bottle,
     python3-docker,

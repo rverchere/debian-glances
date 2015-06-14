@@ -1,3 +1,9 @@
+glances (2.4.2-1) unstable; urgency=medium
+
+  * New upstream release 2.4.2.
+
+ -- Rémi Verchère <rverchere@gmail.com>  Sun, 14 Jun 2015 15:21:46 +0200
+
 glances (2.3-1) unstable; urgency=medium
 
   * New upstream release 2.3.

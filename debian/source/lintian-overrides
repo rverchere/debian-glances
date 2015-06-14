@@ -1,0 +1,3 @@
+glances source: source-is-missing glances/outputs/static/js/vendors/lodash.min.js
+glances source: source-is-missing glances/outputs/static/js/vendors/angular.min.js
+glances source: source-is-missing glances/outputs/static/js/vendors/angular-route.min.js
